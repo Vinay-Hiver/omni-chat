@@ -1,0 +1,32 @@
+/* HOT Design System typography — mirrors the Figma text styles (Hanken Grotesk). */
+@import '@fontsource/hanken-grotesk/400.css';
+@import '@fontsource/hanken-grotesk/500.css';
+
+:root {
+  --fontFamily: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fontWeightRegular: 400;
+  --fontWeightMedium: 500;
+}
+
+body {
+  font-family: var(--fontFamily);
+  color: var(--slateTextBody);
+}
+
+/* Body — Regular */
+.text-body-xsmall { font: var(--fontWeightRegular) 12px/18px var(--fontFamily); }
+.text-body-small  { font: var(--fontWeightRegular) 14px/20px var(--fontFamily); }
+.text-body-medium { font: var(--fontWeightRegular) 16px/24px var(--fontFamily); }
+.text-body-large  { font: var(--fontWeightRegular) 18px/28px var(--fontFamily); }
+
+/* Label — Medium */
+.text-label-xsmall { font: var(--fontWeightMedium) 12px/18px var(--fontFamily); }
+.text-label-small  { font: var(--fontWeightMedium) 14px/20px var(--fontFamily); }
+.text-label-medium { font: var(--fontWeightMedium) 16px/24px var(--fontFamily); }
+.text-label-large  { font: var(--fontWeightMedium) 18px/28px var(--fontFamily); }
+
+/* Heading — Medium */
+.text-heading-h4 { font: var(--fontWeightMedium) 20px/24px var(--fontFamily); }
+.text-heading-h3 { font: var(--fontWeightMedium) 24px/28px var(--fontFamily); }
+.text-heading-h2 { font: var(--fontWeightMedium) 30px/36px var(--fontFamily); }
+.text-heading-h1 { font: var(--fontWeightMedium) 36px/44px var(--fontFamily); }

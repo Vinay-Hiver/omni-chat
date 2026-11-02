@@ -1,0 +1,61 @@
+/* HOT Design System — SLA pill and alert (first response time and resolution time). Values read from the Figma "Pills" and "States" frames; colors use tokens only. */
+.hot-sla-pill {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--slateSurfaceDefault);
+  color: var(--slateSurfaceWhite);
+  font: var(--fontWeightRegular) 12px/18px var(--fontFamily);
+  white-space: nowrap;
+}
+.hot-sla-pill__icon { flex: none; width: 12px; height: 12px; }
+.hot-sla-pill--due { background: var(--warningSurfaceDark); }
+.hot-sla-pill--overdue { background: var(--errorSurfaceDisabled); }
+.hot-sla-pill--done { background: var(--successBorderDark); }
+
+/* Alert: a coloured bar with the message and an arrow. */
+.hot-sla-alert {
+  --alert-bg: var(--slateSurfaceSubtle200);
+  --alert-fg: var(--slateTextBody);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--alert-bg);
+  color: var(--alert-fg);
+  font: var(--fontWeightMedium) 12px/18px var(--fontFamily);
+  text-align: left;
+}
+.hot-sla-alert--due { --alert-bg: var(--warningSurfaceSubtle); --alert-fg: var(--warningTextBody); }
+.hot-sla-alert--overdue { --alert-bg: var(--pastelRedSurfaceSubtle); --alert-fg: var(--errorTextSubtle); }
+.hot-sla-alert--done { --alert-bg: var(--pastelGreenSurfaceSubtle); --alert-fg: var(--successTextBody); }
+
+.hot-sla-alert--button { cursor: pointer; }
+.hot-sla-alert--button:focus-visible { outline: 2px solid var(--primaryBorderDefault); outline-offset: 2px; }
+
+.hot-sla-alert__main { display: flex; flex: 1; align-items: center; gap: 8px; min-width: 0; }
+.hot-sla-alert__message { flex: 1; min-width: 0; }
+.hot-sla-alert__badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+  border-radius: 20px;
+  background: var(--alert-fg);
+  color: var(--slateSurfaceWhite);
+}
+.hot-sla-alert__badge > svg { width: 12px; height: 12px; }
+.hot-sla-alert > svg { flex: none; }

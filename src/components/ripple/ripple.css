@@ -1,0 +1,13 @@
+/* Click ripple. Copied from the product's PrimeVue Ripple (a 400ms linear grow to 2.5x while fading out).
+   The product colour is black at 10%; here it is the darkest text token at 10%. */
+.hot-ripple {
+  position: absolute;
+  display: block;
+  border-radius: 100%;
+  background: color-mix(in srgb, var(--slateTextTitle) 10%, transparent);
+  transform: scale(0);
+  pointer-events: none;
+}
+.hot-ripple--active { animation: hot-ripple 400ms linear; }
+@keyframes hot-ripple { 100% { opacity: 0; transform: scale(2.5); } }
+@media (prefers-reduced-motion: reduce) { .hot-ripple--active { animation: none; } }

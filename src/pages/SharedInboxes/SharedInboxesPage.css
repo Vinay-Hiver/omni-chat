@@ -1,0 +1,9 @@
+/* HOT Design System — Admin panel > Shared Inbox page. Values read from the Figma frame 3205:4445; colors use tokens only. */
+.hot-shared-inboxes__bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; box-sizing: border-box; min-height: 60px; padding: 0 20px; border-bottom: 1px solid var(--slateBorderLight); }
+.hot-shared-inboxes__bar-title { margin: 0; font: var(--fontWeightMedium) 16px/24px var(--fontFamily); color: var(--slateTextBody); }
+.hot-shared-inboxes__body { padding: 16px; }
+.hot-shared-inboxes__name { display: inline-flex; align-items: center; gap: 10px; }
+.hot-shared-inboxes__name svg { flex: none; }
+.hot-shared-inboxes__page { display: flex; flex-direction: column; height: 100%; }
+/* A settings page that is not built yet: its name, centred in the space under the heading bar */
+.hot-shared-inboxes__placeholder { display: flex; flex: 1; align-items: center; justify-content: center; padding: 24px; text-align: center; font: var(--fontWeightMedium) 16px/24px var(--fontFamily); color: var(--slateTextBody); }

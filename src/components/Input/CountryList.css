@@ -1,0 +1,16 @@
+/* The phone input's country list. Built from the product code, not from Figma, using the List item row and the Dropdown panel styles. */
+.hot-country-list {
+  position: absolute;
+  z-index: 1000;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  min-width: 320px; /* the default width of the whole phone input */
+  max-width: calc(100vw - 32px);
+}
+/* Product: the list scrolls and is at most half the screen tall */
+.hot-country-list__list { max-height: 50vh; padding: 6px 8px 8px; }
+.hot-country-list__flag { font-size: 16px; line-height: 24px; }
+.hot-country-list__text { display: inline-flex; align-items: baseline; gap: 8px; min-width: 0; }
+.hot-country-list__dial { color: var(--slateTextSubtle); flex: none; }
+.hot-country-list__empty { padding: 20px 16px; text-align: center; font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextBody); }

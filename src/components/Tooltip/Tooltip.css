@@ -1,0 +1,35 @@
+/* HOT Design System — Tooltip. Values read from the Figma "Tooltip" page; colors use tokens only. */
+.hot-tooltip-wrap { position: relative; display: inline-flex; }
+
+.hot-tooltip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 4px;
+  background: var(--slateSurfaceDark600);
+  color: var(--slateSurfaceWhite);
+  font: var(--fontWeightRegular) 12px/18px var(--fontFamily);
+  white-space: nowrap;
+}
+
+/* Floating position, used by the Tooltip wrapper. The 6px gap is not in Figma. */
+.hot-tooltip--floating { position: absolute; z-index: 1000; pointer-events: none; }
+.hot-tooltip--top { bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); }
+.hot-tooltip--bottom { top: calc(100% + 6px); left: 50%; transform: translateX(-50%); }
+.hot-tooltip--left { right: calc(100% + 6px); top: 50%; transform: translateY(-50%); }
+.hot-tooltip--right { left: calc(100% + 6px); top: 50%; transform: translateY(-50%); }
+
+/* Portal position: drawn on the page itself at the point next to the element. */
+.hot-tooltip--portal { position: fixed; z-index: 2000; pointer-events: none; }
+.hot-tooltip--portal-top { transform: translate(-50%, -100%); }
+.hot-tooltip--portal-bottom { transform: translate(-50%, 0); }
+.hot-tooltip--portal-left { transform: translate(-100%, -50%); }
+.hot-tooltip--portal-right { transform: translate(0, -50%); }
+
+/* The bubble dissolves in over 200ms when it appears. */
+@keyframes hot-tooltip-dissolve { from { opacity: 0; } to { opacity: 1; } }
+.hot-tooltip--floating, .hot-tooltip--portal { animation: hot-tooltip-dissolve 200ms ease-out; }
+@media (prefers-reduced-motion: reduce) { .hot-tooltip--floating, .hot-tooltip--portal { animation: none; } }

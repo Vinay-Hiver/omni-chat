@@ -1,0 +1,56 @@
+/* HOT Design System — Sub-nav. Values read from the Figma "Sub-nav" frame (HOT Storybook - AI Boilerplate, 3205:3643); colors use tokens only. */
+.hot-sub-nav {
+  user-select: none;
+  position: relative; /* the switch menu opens under the heading */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: none; /* never shrinks below 240px, even inside a flex row */
+  width: 240px;
+  min-width: 240px;
+  height: 100%;
+  gap: 12px; /* between the heading and the list */
+  padding: 12px;
+  background: var(--slateSurfaceWhite);
+  box-shadow: inset -1px 0 0 var(--slateBorderLight); /* drawn inside, so it takes no width, as in Figma */
+  font-family: var(--fontFamily);
+  color: var(--slateTextBody);
+}
+.hot-sub-nav__header { display: flex; align-items: flex-start; gap: 4px; padding: 0; }
+.hot-sub-nav--simple .hot-sub-nav__header { align-items: center; } /* a heading on its own is just its 24px line */
+.hot-sub-nav__back {
+  box-sizing: border-box; display: inline-flex; flex: none; align-items: center; justify-content: center;
+  width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--slateTextBody); cursor: pointer;
+}
+.hot-sub-nav__back:hover { background: var(--slateSurfaceSlate150); }
+.hot-sub-nav__heading { display: flex; flex: 1; align-items: flex-start; gap: 4px; min-width: 0; padding: 0; border: 0; background: transparent; text-align: left; font: inherit; color: inherit; }
+.hot-sub-nav__heading--button { cursor: pointer; }
+.hot-sub-nav__text { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.hot-sub-nav__title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--fontWeightMedium) 16px/24px var(--fontFamily); color: var(--slateTextTitle); }
+.hot-sub-nav__subtitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--fontWeightRegular) 12px/18px var(--fontFamily); color: var(--slateTextSubtle); }
+.hot-sub-nav__switch {
+  box-sizing: border-box; display: inline-flex; flex: none; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border: 1px solid var(--slateBorderLight); border-radius: 8px; background: var(--slateSurfaceSubtle100Hover); color: var(--slateBorderDark);
+}
+.hot-sub-nav__heading--button:hover .hot-sub-nav__switch { background: var(--slateSurfaceSlate150); }
+.hot-sub-nav__switch--plain { border-color: transparent; background: transparent; }
+.hot-sub-nav__back:focus-visible, .hot-sub-nav__heading--button:focus-visible, .hot-sub-nav__item:focus-visible { outline: 2px solid var(--primaryBorderDefault); outline-offset: -2px; }
+
+.hot-sub-nav__list { display: flex; flex-direction: column; gap: 2px; list-style: none; margin: 0; padding: 0; }
+.hot-sub-nav__item {
+  box-sizing: border-box; display: flex; align-items: center; gap: 8px; width: 100%; height: 32px; padding: 0 8px;
+  border: 0; border-radius: 8px; background: transparent; color: var(--slateTextBody);
+  font: var(--fontWeightRegular) 14px/20px var(--fontFamily); text-align: left; cursor: pointer;
+}
+.hot-sub-nav__item svg { flex: none; }
+.hot-sub-nav__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hot-sub-nav__item:is(:hover, [data-force-state='hover']) { background: var(--slateSurfaceSlate150); }
+.hot-sub-nav__item[aria-current='page'] { background: var(--blueSurfaceSubtle); color: var(--blueBorderDark); font-weight: var(--fontWeightMedium); }
+
+/* The arrow turns up while the menu is open, and the menu drops under the heading across the sub-nav */
+.hot-sub-nav__switch svg { transition: transform 150ms ease; }
+.hot-sub-nav__heading[data-open] .hot-sub-nav__switch svg { transform: rotate(180deg); }
+.hot-sub-nav__menu { position: absolute; z-index: 10; top: 66px; left: 12px; right: 12px; animation: hot-sub-nav-menu-in 200ms ease-out; }
+.hot-sub-nav__menu .hot-dropdown { width: 100%; }
+@keyframes hot-sub-nav-menu-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hot-sub-nav__menu { animation: none; } .hot-sub-nav__switch svg { transition: none; } }

@@ -1,0 +1,1 @@
+export { startRipple } from './ripple'

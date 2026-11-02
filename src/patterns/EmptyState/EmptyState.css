@@ -1,0 +1,32 @@
+/* HOT Design System — Empty state. Values read from the Figma "Empty State" frames; colors use tokens only. */
+.hot-empty-state {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  font-family: var(--fontFamily);
+  text-align: center;
+}
+.hot-empty-state__body { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 500px; }
+.hot-empty-state__icon {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  padding: 10px;
+  border-radius: 110px;
+  background: var(--slateSurfaceSlate150);
+  color: var(--slateTextBody);
+}
+.hot-empty-state__text { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.hot-empty-state__title { margin: 0; font: var(--fontWeightMedium) 16px/24px var(--fontFamily); color: var(--slateTextTitle); }
+.hot-empty-state__description { margin: 0; font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }
+.hot-empty-state__action { display: flex; justify-content: center; }

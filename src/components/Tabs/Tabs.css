@@ -1,0 +1,65 @@
+/* HOT Design System — Tabs. Values read from the Figma "Tabs" page; colors use tokens only. */
+.hot-tabs { display: flex; font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }
+
+.hot-tab {
+  position: relative; /* with overflow hidden, keeps the click ripple inside the tab */
+  overflow: hidden;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.hot-tab:focus-visible { outline: 2px solid var(--primarySurfaceLighter); outline-offset: -2px; }
+.hot-tab:disabled { cursor: not-allowed; opacity: 0.5; }
+
+/* ---- Outlined: underline tabs on a thin line ---- */
+.hot-tabs--outlined {
+  gap: 20px;
+  height: 36px;
+  align-items: stretch;
+  /* The full-width line sits below the active tab's thicker underline */
+  box-shadow: inset 0 -1px 0 var(--slateBorderLight);
+}
+.hot-tabs--outlined .hot-tab {
+  height: 36px;
+  padding: 8px 12px;
+  border-bottom: 2px solid transparent;
+  font-weight: var(--fontWeightRegular);
+  color: var(--slateTextSubtle);
+}
+.hot-tabs--outlined .hot-tab:is(:hover, [data-force-state='hover']) { color: var(--slateTextBody); }
+.hot-tabs--outlined .hot-tab[aria-selected='true'] {
+  border-bottom-color: var(--slateTextBody);
+  font-weight: var(--fontWeightMedium);
+  color: var(--slateTextBody);
+}
+
+/* ---- Filled: a pill selector, used for 2 or 3 options ---- */
+.hot-tabs--filled {
+  box-sizing: border-box;
+  align-items: center;
+  width: max-content;
+  height: 40px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--slateSurfaceSubtle100Hover);
+}
+.hot-tabs--filled .hot-tab {
+  width: 122px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: var(--slateSurfaceSubtle100Hover);
+  font-weight: var(--fontWeightMedium);
+  color: var(--slateTextSubtle);
+}
+.hot-tabs--filled .hot-tab:is(:hover, [data-force-state='hover']) { background: var(--slateSurfaceSubtle); }
+.hot-tabs--filled .hot-tab[aria-selected='true'] { background: var(--slateSurfaceWhite); color: var(--slateTextBody); }

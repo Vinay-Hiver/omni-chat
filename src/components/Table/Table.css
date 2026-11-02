@@ -1,0 +1,79 @@
+/* HOT Design System — Table. Values read from the Figma "Table" page (file "HOT Storybook & AIBoilerplate"); colors use tokens only. */
+.hot-table-wrap {
+  box-sizing: border-box;
+  width: 100%;
+  /* A thin outer border with 12px corners, which also clip the header and the last row */
+  overflow: hidden;
+  border: 1px solid var(--slateBorderLight);
+  border-radius: 12px;
+}
+
+.hot-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  font: var(--fontWeightRegular) 14px/20px var(--fontFamily);
+  color: var(--slateTextBody);
+}
+
+.hot-table__th,
+.hot-table__td {
+  box-sizing: border-box;
+  padding: 0 20px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--slateBorderLight);
+}
+
+/* Header: 48px, soft grey, medium weight */
+.hot-table__th {
+  height: 48px;
+  background: var(--slateSurfaceSubtle);
+  font: var(--fontWeightMedium) 14px/20px var(--fontFamily);
+  letter-spacing: 0.14px;
+  color: var(--slateTextBody);
+  white-space: nowrap;
+}
+
+/* Rows: 64px, white */
+.hot-table__td {
+  height: 64px;
+  background: var(--slateSurfaceWhite);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background-color 120ms ease;
+}
+
+/* The last row's line is the table's own bottom border */
+.hot-table__row:last-child .hot-table__td { border-bottom: 0; }
+
+/* A clickable row shows the pointer and a keyboard focus ring */
+.hot-table__row--clickable { cursor: pointer; }
+.hot-table__row--clickable:focus-visible { outline: 2px solid var(--primaryBorderDefault); outline-offset: -2px; }
+
+/* Hover: the whole row turns light grey */
+.hot-table__row:is(:hover, [data-force-state='hover']) .hot-table__td { background: var(--slateSurfaceSubtle100Hover); }
+
+.hot-table__th--center, .hot-table__td--center { text-align: center; }
+.hot-table__th--right, .hot-table__td--right { text-align: right; }
+
+/* Row actions: a small pill of icon buttons at the right end of a hovered row. */
+.hot-table__td--actions { position: relative; overflow: visible; }
+.hot-table__actions {
+  position: absolute;
+  top: 14px;
+  right: 10px;
+  display: none;
+  align-items: center;
+  gap: 4px;
+  padding: 3px; /* plus the 1px border = the 4px inset in Figma */
+  box-sizing: border-box;
+  background: var(--slateSurfaceWhite);
+  border: 1px solid var(--slateSurfaceSubtle200);
+  border-radius: 6px;
+}
+.hot-table__row:is(:hover, :focus-within, [data-force-state='hover']) .hot-table__actions { display: flex; }
+.hot-table__action-wrap { display: inline-flex; align-items: center; gap: 4px; }
+.hot-table__divider { width: 1px; height: 20px; background: var(--slateBorderLight); margin: 0 -1px 0 0; /* takes no room, like the 0-width line in Figma */ }

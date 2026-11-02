@@ -1,0 +1,76 @@
+/* HOT Design System — Switch. Values read from the Figma "Switch" page; colors use tokens only. */
+.hot-switch {
+  --sw-w: 32px;
+  --sw-h: 16px;
+  --sw-knob: 12px;
+  --sw-travel: 16px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font: var(--fontWeightRegular) 14px/20px var(--fontFamily);
+  color: var(--slateTextBody);
+}
+.hot-switch--large {
+  --sw-w: 40px;
+  --sw-h: 20px;
+  --sw-knob: 16px;
+  --sw-travel: 20px;
+}
+
+.hot-switch__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hot-switch__track {
+  position: relative;
+  flex: none;
+  width: var(--sw-w);
+  height: var(--sw-h);
+  border-radius: calc(var(--sw-h) / 2);
+  background: var(--slateSurfaceDefault);
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+.hot-switch__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: var(--sw-knob);
+  height: var(--sw-knob);
+  border-radius: 50%;
+  background: var(--slateSurfaceWhite);
+  transition: transform 150ms ease;
+}
+
+/* On */
+.hot-switch__input:checked + .hot-switch__track { background: var(--primarySurfaceDefault); }
+.hot-switch__input:checked + .hot-switch__track .hot-switch__knob { transform: translateX(var(--sw-travel)); }
+
+/* Hover */
+.hot-switch:is(:hover, [data-force-state='hover']) .hot-switch__track { background: var(--slateSurfaceSubtle200); }
+.hot-switch:is(:hover, [data-force-state='hover']) .hot-switch__input:checked + .hot-switch__track { background: var(--primarySurfaceLighter); }
+
+/* Focus: dark grey off track, light blue ring */
+.hot-switch__input:focus-visible + .hot-switch__track,
+.hot-switch[data-force-state='focus'] .hot-switch__track {
+  background: var(--slateSurfaceDark500);
+  box-shadow: 0 0 0 2px var(--primarySurfaceLighter);
+}
+.hot-switch__input:focus-visible:checked + .hot-switch__track,
+.hot-switch[data-force-state='focus'] .hot-switch__input:checked + .hot-switch__track {
+  background: var(--primarySurfaceDefault);
+}
+
+/* Disabled */
+.hot-switch--disabled { cursor: not-allowed; color: var(--slateTextDisabled); }
+.hot-switch--disabled .hot-switch__track,
+.hot-switch--disabled:hover .hot-switch__track,
+.hot-switch--disabled .hot-switch__input:checked + .hot-switch__track {
+  background: var(--slateSurfaceDisabled);
+}

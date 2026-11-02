@@ -1,0 +1,86 @@
+/* HOT Design System — Radio and RadioGroup. Values read from the Figma "Radio" page; colors use tokens only. */
+.hot-radio-group {
+  /* The group label color is a fixed value in Figma, not a token. The required asterisk uses the same token in every component. */
+  --radio-group-label: #6b778c;
+  --radio-group-required: var(--errorBorderDefault);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.hot-radio-group__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 20px;
+  font: var(--fontWeightRegular) 12px/18px var(--fontFamily);
+  color: var(--radio-group-label);
+}
+.hot-radio-group__required { color: var(--radio-group-required); }
+
+.hot-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  cursor: pointer;
+  font: var(--fontWeightRegular) 14px/20px var(--fontFamily);
+  color: var(--slateTextBody);
+}
+
+.hot-radio__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 24px area around the 14px circle */
+.hot-radio__circle {
+  position: relative;
+  box-sizing: border-box;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin: 5px;
+  border: 2px solid var(--slateBorderLight);
+  border-radius: 50%;
+  background: var(--slateSurfaceWhite);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.hot-radio__circle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #fafbfc;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.hot-radio__input:checked + .hot-radio__circle {
+  background: var(--primarySurfaceDefault);
+  border-color: var(--primarySurfaceDefault);
+}
+.hot-radio__input:checked + .hot-radio__circle::after { opacity: 1; }
+
+/* Not in Figma: keyboard focus and disabled, so the control is usable */
+.hot-radio__input:focus-visible + .hot-radio__circle,
+.hot-radio[data-force-state='focus'] .hot-radio__circle {
+  outline: 2px solid var(--primarySurfaceLighter);
+  outline-offset: 2px;
+}
+.hot-radio--disabled { cursor: not-allowed; color: var(--slateTextDisabled); }
+.hot-radio--disabled .hot-radio__circle,
+.hot-radio--disabled .hot-radio__input:checked + .hot-radio__circle {
+  background: var(--slateSurfaceDisabled);
+  border-color: var(--slateSurfaceDisabled);
+}
+
+/* No label: just the 24px circle area */
+.hot-radio--bare { gap: 0; }

@@ -1,0 +1,14 @@
+/* HOT Design System — Badge. Values read from the Figma "Badges" page; colors use tokens only. */
+.hot-badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 12px;
+  font: var(--fontWeightRegular) 12px/18px var(--fontFamily);
+  white-space: nowrap;
+}
+.hot-badge--default { background: var(--slateSurfaceSubtle100Hover); color: var(--slateTextBody); }
+.hot-badge--primary { background: var(--primarySurfaceDefault); color: var(--slateSurfaceWhite); }
+.hot-badge--important { background: var(--errorSurfaceDefault); color: var(--slateSurfaceWhite); }

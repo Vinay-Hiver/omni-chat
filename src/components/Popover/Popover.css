@@ -1,0 +1,8 @@
+/* HOT Design System — Popover. A placement wrapper only: the panel inside brings its own look (for example the Dropdown). */
+.hot-popover {
+  position: fixed;
+  z-index: 1000;
+  animation: hot-popover-in 160ms ease-out;
+}
+@keyframes hot-popover-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hot-popover { animation: none; } }

@@ -1,0 +1,145 @@
+/* HOT Design System — text fields (Input, Textarea). Values read from Figma "Text Input" and "Textarea Input". */
+.hot-field {
+  /* The required asterisk uses the same token in every component. */
+  --field-required: var(--errorBorderDefault);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 320px;
+  max-width: 100%;
+  font: var(--fontWeightRegular) 14px/20px var(--fontFamily);
+  color: var(--slateTextBody);
+}
+.hot-field--full { width: 100%; }
+
+.hot-field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font: var(--fontWeightMedium) 14px/20px var(--fontFamily);
+  color: var(--slateTextBody);
+}
+.hot-field__required { color: var(--field-required); }
+
+.hot-field__box {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--slateBorderLight);
+  border-radius: 6px;
+  background: var(--slateSurfaceWhite);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.hot-field--sm .hot-field__box { min-height: 32px; }
+
+.hot-field__control {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--slateTextBody);
+  font: var(--fontWeightRegular) 14px/20px var(--fontFamily);
+}
+.hot-field__control::placeholder { color: var(--slateTextDisabled); opacity: 1; }
+
+.hot-field__affix {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  color: var(--slateTextSubtle);
+}
+.hot-field__affix--icon { color: var(--slateIconsActive); }
+.hot-field__affix--search { color: var(--slateBorderDefault); }
+.hot-field__control[type='search']::-webkit-search-cancel-button,
+.hot-field__control[type='search']::-webkit-search-decoration { appearance: none; display: none; }
+.hot-field__count { font: var(--fontWeightRegular) 12px/18px var(--fontFamily); color: var(--slateTextSubtle); }
+
+/* Action ("With CTA"): a divided button-like area on the right edge */
+.hot-field__box--action { padding-right: 0; }
+.hot-field__action {
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 0;
+  border-left: 1px solid var(--slateBorderLight);
+  background: transparent;
+  color: var(--slateTextSubtle);
+  font: var(--fontWeightRegular) 12px/18px var(--fontFamily);
+  cursor: pointer;
+}
+
+.hot-field__helper { font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }
+
+/* States */
+.hot-field:not(.hot-field--disabled):not(.hot-field--error) .hot-field__box:hover,
+.hot-field[data-force-state='hover'] .hot-field__box {
+  background: var(--slateSurfaceSubtle);
+}
+.hot-field:not(.hot-field--error) .hot-field__box:focus-within,
+.hot-field[data-force-state='focus'] .hot-field__box {
+  background: var(--slateSurfaceWhite);
+  border-color: var(--blueBorderDark);
+  border-radius: 8px;
+}
+.hot-field--error .hot-field__box {
+  border-color: var(--errorBorderDefault);
+  border-radius: 8px;
+}
+.hot-field--error .hot-field__helper { color: var(--errorTextBody); }
+
+.hot-field--disabled .hot-field__box,
+.hot-field[data-force-state='disabled'] .hot-field__box {
+  background: var(--slateSurfaceSubtle);
+  cursor: not-allowed;
+}
+.hot-field--disabled .hot-field__control { color: var(--slateTextDisabled); cursor: not-allowed; }
+.hot-field--disabled .hot-field__count { color: var(--slateTextDisabled); }
+
+/* Textarea */
+.hot-field--textarea .hot-field__box { align-items: stretch; min-height: 80px; padding: 10px 12px; }
+.hot-field--textarea:not(.hot-field--tags) .hot-field__box { max-height: 100px; } /* the tags version keeps growing with its tags */
+.hot-field--textarea .hot-field__control { resize: vertical; min-height: 58px; max-height: 78px; }
+
+/* ---- Tags input (Figma "Tags" type) ---- */
+.hot-field--tags .hot-field__box { gap: 6px; }
+.hot-field__tags { display: flex; flex: 1 1 auto; align-items: center; gap: 6px; min-width: 0; overflow: hidden; }
+.hot-field__tags .hot-tag { flex: none; }
+.hot-field__tag-input { flex: 1 1 60px; min-width: 60px; }
+/* In a Textarea the tags wrap onto more lines */
+.hot-field__tags--wrap { flex-wrap: wrap; row-gap: 6px; align-items: flex-start; align-self: stretch; overflow: visible; }
+.hot-field__tags--wrap .hot-field__tag-input { align-self: center; }
+
+/* ---- Phone input (Figma "Phone" type): country button before the number ---- */
+.hot-field__country {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 8px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--slateTextBody);
+  font: var(--fontWeightMedium) 14px/20px var(--fontFamily);
+  cursor: pointer;
+}
+.hot-field__country:focus-visible { outline: 2px solid var(--primarySurfaceLighter); outline-offset: 2px; border-radius: 4px; }
+.hot-field__country:disabled { cursor: not-allowed; }
+.hot-field__flag { display: inline-flex; width: 16px; height: 16px; flex: none; }
+.hot-field__flag > svg { width: 100%; height: 100%; }
+.hot-field__chevron { display: inline-flex; width: 16px; height: 16px; flex: none; color: var(--slateIconsSubtle); }
+.hot-field__chevron > svg { width: 100%; height: 100%; }
+/* The tags text box must not take the textarea's minimum height */
+.hot-field--textarea .hot-field__tag-input { min-height: 0; height: 20px; resize: none; }
+
+/* The country list opens under the field, so the box is its anchor */
+.hot-field--has-country-list .hot-field__box { position: relative; }

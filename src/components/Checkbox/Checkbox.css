@@ -1,0 +1,82 @@
+/* HOT Design System — Checkbox. Same box as the checkbox in Dropdown rows: a thin grey border when off,
+   a solid blue box when on. The hover and press highlight belongs to Dropdown rows only, not to this component. */
+.hot-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  cursor: pointer;
+  font: var(--fontWeightRegular) 14px/20px var(--fontFamily);
+  color: var(--slateTextBody);
+}
+
+.hot-checkbox__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 24px area around the 14px box */
+.hot-checkbox__box {
+  position: relative;
+  box-sizing: border-box;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin: 5px;
+  border: 1px solid var(--slateBorderDefault);
+  border-radius: 3px;
+  background: var(--slateSurfaceWhite);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.hot-checkbox__mark {
+  position: absolute;
+  display: none;
+  left: 1px;
+  color: var(--slateSurfaceWhite);
+}
+.hot-checkbox__check { top: 2px; width: 8px; height: 6px; }
+.hot-checkbox__dash { top: 4px; width: 8px; height: 2px; }
+
+.hot-checkbox__label { display: inline-flex; align-items: center; gap: 0; }
+.hot-checkbox__required { color: var(--errorBorderDefault); }
+
+/* Checked and indeterminate: solid blue */
+.hot-checkbox__input:checked + .hot-checkbox__box,
+.hot-checkbox--indeterminate .hot-checkbox__box {
+  border-width: 2px;
+  background: var(--primarySurfaceDefault);
+  border-color: var(--primarySurfaceDefault);
+}
+.hot-checkbox__input:checked + .hot-checkbox__box .hot-checkbox__check { display: block; }
+.hot-checkbox--indeterminate .hot-checkbox__box .hot-checkbox__check { display: none; }
+.hot-checkbox--indeterminate .hot-checkbox__box .hot-checkbox__dash { display: block; }
+
+/* Focus: light blue border */
+.hot-checkbox__input:focus-visible + .hot-checkbox__box,
+.hot-checkbox[data-force-state='focus'] .hot-checkbox__box {
+  border-color: var(--primarySurfaceLighter);
+}
+
+/* Invalid: red border, unless the box is focused */
+.hot-checkbox--invalid .hot-checkbox__box { border-color: var(--errorBorderDefault); }
+.hot-checkbox--invalid .hot-checkbox__input:focus-visible + .hot-checkbox__box,
+.hot-checkbox--invalid[data-force-state='focus'] .hot-checkbox__box { border-color: var(--primarySurfaceLighter); }
+
+/* Disabled */
+.hot-checkbox--disabled { cursor: not-allowed; }
+.hot-checkbox--disabled .hot-checkbox__box,
+.hot-checkbox--disabled .hot-checkbox__input:checked + .hot-checkbox__box,
+.hot-checkbox--disabled.hot-checkbox--indeterminate .hot-checkbox__box {
+  background: var(--slateSurfaceDisabled);
+  border-color: var(--slateSurfaceDisabled);
+}
+.hot-checkbox--disabled .hot-checkbox__mark { color: var(--slateSurfaceDark500); }
+
+/* No label: 20px area */
+.hot-checkbox--bare { min-height: 20px; }
+.hot-checkbox--bare .hot-checkbox__box { margin: 3px; }

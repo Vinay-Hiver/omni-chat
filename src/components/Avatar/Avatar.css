@@ -1,0 +1,60 @@
+/* HOT Design System — Avatar. Values read from the Figma "Avatar" page; colors use tokens only. */
+.hot-avatar {
+  /* A parent (for example a pressed list row or the main nav) can recolor the background, ring and letter by setting --avatar-bg, --avatar-ring and --avatar-letter. */
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--avatar-bg, var(--pastelLightBlueSurfaceDefault));
+  color: var(--avatar-letter, var(--slateSurfaceWhite));
+  font: var(--fontWeightMedium) 12px/18px var(--fontFamily);
+  user-select: none;
+}
+.hot-avatar--small { width: 18px; height: 18px; font-size: 9px; line-height: 13.5px; }
+
+/* Status dot: a white ring with a colored dot inside. It sits at the bottom-right corner. */
+.hot-avatar__status {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--avatar-ring, var(--slateSurfaceWhite));
+}
+.hot-avatar__status::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 50%;
+  background: var(--successBorderDark);
+}
+.hot-avatar__status--offline::before { background: var(--slateSurfaceDefault); }
+.hot-avatar__status--offline::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--slateSurfaceWhite);
+}
+
+/* Small: the dot is 7.5px and, as in Figma, sits slightly lower and further out */
+.hot-avatar--small .hot-avatar__status { left: 12px; top: 12px; width: 7.5px; height: 7.5px; }
+.hot-avatar--small .hot-avatar__status::before { inset: 0.94px; }
+.hot-avatar--small .hot-avatar__status--offline { left: 11px; top: 11px; }
+.hot-avatar--small .hot-avatar__status--offline::after { inset: 1.88px; }
+
+/* Colours, from the pastel surface tokens (grey is the slate surface). */
+.hot-avatar--lightBlue { --avatar-bg: var(--pastelLightBlueSurfaceDefault); }
+.hot-avatar--red { --avatar-bg: var(--pastelRedSurfaceDefault); }
+.hot-avatar--orange { --avatar-bg: var(--pastelOrangeSurfaceDefault); }
+.hot-avatar--yellow { --avatar-bg: var(--pastelYellowSurfaceDefault); }
+.hot-avatar--green { --avatar-bg: var(--pastelGreenSurfaceDefault); }
+.hot-avatar--purple { --avatar-bg: var(--pastelPurpleSurfaceDefault); }
+.hot-avatar--violet { --avatar-bg: var(--pastelVioletSurfaceDefault); }
+.hot-avatar--grey { --avatar-bg: var(--slateSurfaceDefault); }

@@ -1,0 +1,64 @@
+/* HOT Design System — List item ("Lists" and "List Elements" in Figma). Values read from the Figma "Lists" page; colors use tokens only. */
+.hot-list-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--slateSurfaceWhite);
+  color: var(--slateTextBody);
+  font: var(--fontWeightRegular) 14px/20px var(--fontFamily);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+.hot-list-item--no-leading { min-height: 36px; padding: 8px; }
+.hot-list-item--no-leading.hot-list-item--right { min-height: 40px; padding: 10px 8px; }
+.hot-list-item--description { min-height: 54px; }
+.hot-list-item--description.hot-list-item--no-leading { min-height: 58px; }
+
+/* Compact: the size used inside dropdown menus */
+.hot-list-item--compact { gap: 8px; min-height: 40px; padding: 8px 4px; }
+.hot-list-item--compact.hot-list-item--no-leading { min-height: 36px; padding: 8px 4px; }
+
+.hot-list-item__main { display: flex; align-items: center; gap: 12px; flex: 1 1 auto; min-width: 0; }
+.hot-list-item--compact .hot-list-item__main { gap: 4px; }
+
+.hot-list-item__text { display: flex; flex-direction: column; min-width: 0; }
+.hot-list-item__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hot-list-item__heading { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--fontWeightMedium) 14px/20px var(--fontFamily); }
+.hot-list-item__description { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--fontWeightRegular) 12px/18px var(--fontFamily); color: var(--slateTextSubtle); }
+
+.hot-list-item__trailing { display: inline-flex; flex: none; width: 14px; height: 14px; color: var(--primarySurfaceDefault); }
+
+/* States: hover is grey, pressed is pale blue */
+.hot-list-item:is(:hover, [data-force-state='hover']) { background: var(--slateSurfaceSubtle100Hover); }
+.hot-list-item:is(:active, [data-force-state='active']) {
+  background: var(--primarySurfaceSubtle);
+  --avatar-ring: var(--primarySurfaceSubtle);
+  --avatar-letter: var(--primarySurfaceSubtle);
+}
+/* Not in Figma: keyboard focus outline */
+.hot-list-item:focus-visible { outline: 2px solid var(--primarySurfaceLighter); outline-offset: -2px; }
+
+/* ---- Left elements (24px) ---- */
+.hot-list-el { position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center; width: 24px; height: 24px; }
+
+.hot-list-icon { color: var(--slateTextBody); }
+.hot-list-icon--round { border-radius: 9999px; background: var(--slateSurfaceSubtle100Hover); }
+
+/* Radio element */
+.hot-list-radio { box-sizing: border-box; position: relative; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--slateBorderLight); background: var(--slateSurfaceWhite); }
+.hot-list-radio--on { background: var(--primarySurfaceDefault); border-color: var(--primarySurfaceDefault); }
+.hot-list-radio--on::after { content: ''; position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; border-radius: 50%; background: #fafbfc; transform: translate(-50%, -50%); }
+
+/* Checkbox element (Figma "List Elements"): thin grey border when off, solid blue when on.
+   Hover and press are shown by the row behind it. */
+.hot-list-check { box-sizing: border-box; position: relative; width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--slateBorderDefault); background: var(--slateSurfaceWhite); }
+.hot-list-check--on { border-width: 2px; background: var(--primarySurfaceDefault); border-color: var(--primarySurfaceDefault); }
+.hot-list-check svg { display: none; position: absolute; left: 1px; top: 2px; width: 8px; height: 6px; color: var(--slateSurfaceWhite); }
+.hot-list-check--on svg { display: block; }

@@ -1,0 +1,112 @@
+/* HOT Design System — Button. Values read from Figma (Buttons page); colors use tokens only. */
+.hot-btn {
+  --btn-bg: transparent;
+  --btn-fg: var(--slateTextBody);
+  --btn-border: transparent;
+  --btn-bg-hover: var(--btn-bg);
+  --btn-bg-active: var(--btn-bg);
+  --btn-fg-active: var(--btn-fg);
+  --btn-border-active: var(--btn-border);
+  --btn-height: 40px;
+
+  position: relative; /* with overflow hidden, keeps the click ripple inside the button */
+  overflow: hidden;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: var(--btn-height);
+  padding: 0 12px;
+  border: 1px solid var(--btn-border);
+  border-radius: 6px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font: var(--fontWeightMedium) 14px/20px var(--fontFamily);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.hot-btn__icon { display: inline-flex; flex: none; width: 16px; height: 16px; }
+.hot-btn__icon > svg { width: 100%; height: 100%; }
+
+/* Sizes */
+.hot-btn--xs { --btn-height: 28px; }
+.hot-btn--sm { --btn-height: 32px; }
+.hot-btn--md { --btn-height: 40px; }
+.hot-btn--icon-only { width: var(--btn-height); padding: 0; }
+
+/* Types */
+.hot-btn--primary {
+  --btn-bg: var(--primarySurfaceDefault);
+  --btn-fg: var(--slateSurfaceWhite);
+  --btn-bg-hover: var(--primarySurfaceMildDark);
+  --btn-bg-active: var(--primarySurfaceDark);
+}
+/* Secondary: hover copied from the product's Button (HotUiButton, type "secondary"). The fill turns slate 100 and the border stays slate 200.
+   The product has no separate pressed style, so pressed looks like hover. */
+.hot-btn--secondary {
+  --btn-bg: var(--slateSurfaceWhite);
+  --btn-border: var(--slateBorderLight);
+  --btn-bg-hover: var(--slateSurfaceSubtle100Hover);
+  --btn-bg-active: var(--slateSurfaceSubtle100Hover);
+}
+
+.hot-btn--secondary-filled {
+  --btn-bg: var(--slateSurfaceSubtle100Hover);
+  --btn-bg-hover: var(--slateSurfaceSubtle200);
+  --btn-bg-active: var(--slateSurfaceSubtle300);
+}
+.hot-btn--ghost {
+  --btn-bg-hover: var(--slateSurfaceSubtle100Hover);
+  --btn-fg-active: var(--primarySurfaceDefault);
+}
+.hot-btn--error {
+  --btn-bg: var(--errorBorderDefault);
+  --btn-fg: var(--slateSurfaceWhite);
+  --btn-bg-hover: var(--errorSurfaceDefault);
+  --btn-bg-active: var(--errorBorderDark);
+}
+.hot-btn--neutral {
+  --btn-bg: var(--slateTextTitle);
+  --btn-fg: var(--slateSurfaceWhite);
+  --btn-bg-hover: var(--slateSurfaceDark600);
+  --btn-bg-active: var(--slateSurfaceDark500);
+}
+
+/* States (data-force-state exists only so stories can render hover/active statically) */
+.hot-btn:hover:not(:disabled),
+.hot-btn[data-force-state='hover'] {
+  background: var(--btn-bg-hover);
+}
+.hot-btn:active:not(:disabled),
+.hot-btn[data-force-state='active'] {
+  background: var(--btn-bg-active);
+  color: var(--btn-fg-active);
+  border-color: var(--btn-border-active);
+}
+
+.hot-btn:focus-visible {
+  outline: 2px solid var(--primarySurfaceLighter);
+  outline-offset: 2px;
+}
+
+.hot-btn:disabled,
+.hot-btn[data-force-state='disabled'] {
+  background: var(--slateSurfaceDisabled);
+  color: var(--slateTextDisabled);
+  cursor: not-allowed;
+}
+.hot-btn--secondary:disabled,
+.hot-btn--secondary-filled:disabled,
+.hot-btn--secondary[data-force-state='disabled'],
+.hot-btn--secondary-filled[data-force-state='disabled'] {
+  border-color: var(--slateBorderLight);
+}
+.hot-btn--primary:disabled,
+.hot-btn--ghost:disabled,
+.hot-btn--error:disabled,
+.hot-btn--neutral:disabled {
+  border-color: transparent;
+}

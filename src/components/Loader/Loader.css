@@ -1,0 +1,21 @@
+/* HOT Design System — Loader (called "Hot_Loader" in Figma). Values read from the Figma "Loaders" page; colors use tokens only. */
+.hot-loader {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  /* A 7px ring that fades from light grey to dark slate */
+  background: conic-gradient(from 0deg, var(--slateSurfaceSubtle100Hover), var(--slateTextBody));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 7px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 7px));
+  /* Figma turns it a quarter turn every 0.2s, which is one turn per 0.8s */
+  animation: hot-loader-spin 0.8s linear infinite;
+}
+
+@keyframes hot-loader-spin { to { transform: rotate(360deg); } }
+
+/* Not in Figma: for people who ask for less motion, turn it slowly instead of fast */
+@media (prefers-reduced-motion: reduce) {
+  .hot-loader { animation-duration: 3.2s; }
+}

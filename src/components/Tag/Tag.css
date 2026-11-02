@@ -1,0 +1,60 @@
+/* HOT Design System — Tag (called "Chip" in Figma). Values read from the Figma "Chips" page; colors use tokens only. */
+.hot-tag {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: var(--slateSurfaceSubtle);
+  color: var(--slateTextBody);
+  font: var(--fontWeightRegular) 12px/18px var(--fontFamily);
+  white-space: nowrap;
+}
+
+/* The removable tag (Figma "Input_Chip") has a border */
+.hot-tag--removable { border-color: var(--slateBorderLight); }
+
+.hot-tag__icon { display: inline-flex; flex: none; width: 14px; height: 14px; }
+.hot-tag__icon > svg { width: 100%; height: 100%; }
+
+.hot-tag__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.hot-tag__remove > svg { width: 100%; height: 100%; }
+.hot-tag__remove:focus-visible { outline: 2px solid var(--primarySurfaceLighter); outline-offset: 1px; }
+
+/* ---- Colours: the seven pastel colours. Each uses its Surface/Subtle, Text/Body and Border/Default tokens. ---- */
+.hot-tag--yellow    { --tag-bg: var(--pastelYellowSurfaceSubtle);    --tag-fg: var(--pastelYellowTextBody);    --tag-icon: var(--pastelYellowBorderDefault); }
+.hot-tag--lightBlue { --tag-bg: var(--pastelLightBlueSurfaceSubtle); --tag-fg: var(--pastelLightBlueTextBody); --tag-icon: var(--pastelLightBlueBorderDefault); }
+.hot-tag--green     { --tag-bg: var(--pastelGreenSurfaceSubtle);     --tag-fg: var(--pastelGreenTextBody);     --tag-icon: var(--pastelGreenBorderDefault); }
+.hot-tag--purple    { --tag-bg: var(--pastelPurpleSurfaceSubtle);    --tag-fg: var(--pastelPurpleTextBody);    --tag-icon: var(--pastelPurpleBorderDefault); }
+.hot-tag--orange    { --tag-bg: var(--pastelOrangeSurfaceSubtle);    --tag-fg: var(--pastelOrangeTextBody);    --tag-icon: var(--pastelOrangeBorderDefault); }
+.hot-tag--red       { --tag-bg: var(--pastelRedSurfaceSubtle);       --tag-fg: var(--pastelRedTextBody);       --tag-icon: var(--pastelRedBorderDefault); }
+.hot-tag--violet    { --tag-bg: var(--pastelVioletSurfaceSubtle);    --tag-fg: var(--pastelVioletTextBody);    --tag-icon: var(--pastelVioletBorderDefault); }
+
+.hot-tag:is(.hot-tag--yellow, .hot-tag--lightBlue, .hot-tag--green, .hot-tag--purple, .hot-tag--orange, .hot-tag--red, .hot-tag--violet) {
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+  border-color: transparent;
+}
+/* A coloured tag keeps no border when removable. Its close button is 14px, with the icon in the colour's border token. */
+.hot-tag:is(.hot-tag--yellow, .hot-tag--lightBlue, .hot-tag--green, .hot-tag--purple, .hot-tag--orange, .hot-tag--red, .hot-tag--violet) .hot-tag__remove {
+  width: 14px;
+  height: 14px;
+  color: var(--tag-icon);
+}

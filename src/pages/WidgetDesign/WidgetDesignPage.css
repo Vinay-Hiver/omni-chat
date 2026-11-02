@@ -1,0 +1,33 @@
+/* HOT Design System — chat inbox > Widget Design page. Values read from the Figma frame 4:96; colors use tokens only. */
+.hot-widget-design { --widget-color: var(--primaryPurpleSurfaceDefault); display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.hot-widget-design__body { display: flex; flex: 1; gap: 96px; align-items: flex-start; min-height: 0; padding: 20px; overflow: auto; }
+.hot-widget-design__form { display: flex; flex-direction: column; gap: 20px; flex: none; width: 460px; }
+.hot-widget-design__field { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.hot-widget-design__label { font: var(--fontWeightMedium) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }
+.hot-widget-design__required { color: var(--errorTextBody); }
+.hot-widget-design__section { font: var(--fontWeightMedium) 14px/20px var(--fontFamily); color: var(--slateTextBody); }
+.hot-widget-design__swatch { width: 28px; height: 28px; padding: 0; border: 0; border-radius: 6px; background: var(--widget-color); cursor: pointer; }
+.hot-widget-design__logo { display: flex; align-items: center; gap: 12px; }
+.hot-widget-design__upload { width: 40px; height: 40px; border-radius: 9999px; }
+.hot-widget-design__hint { font: var(--fontWeightRegular) 12px/18px var(--fontFamily); color: var(--slateTextSubtle); }
+.hot-widget-design__card { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; padding: 12px 12px 24px; border: 1.5px solid var(--slateBorderLight); border-radius: 8px; }
+.hot-widget-design__card-text { display: flex; flex-direction: column; gap: 4px; max-width: 393px; }
+.hot-widget-design__card-desc { font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }
+.hot-widget-design__stage { flex: none; padding: 20px 20px 32px; border-radius: 8px; background: var(--slateSurfaceSubtle); }
+.hot-widget-design__actions { display: flex; justify-content: flex-end; align-items: center; box-sizing: border-box; min-height: 60px; padding: 0 20px; border-top: 1px solid var(--slateBorderLight); }
+
+/* The live widget preview */
+.hot-widget-preview { display: flex; flex-direction: column; box-sizing: border-box; width: 400px; height: 650px; overflow: hidden; border: 1px solid var(--slateBorderLight); border-radius: 12px; background: var(--slateSurfaceWhite); box-shadow: 0 4px 8.9px 0 color-mix(in srgb, var(--widget-color) 25%, transparent); }
+.hot-widget-preview__header { position: relative; display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid var(--slateBorderLight); }
+.hot-widget-preview__logo { flex: none; }
+.hot-widget-preview__titles { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.hot-widget-preview__title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--fontWeightMedium) 14px/17px var(--fontFamily); color: var(--slateTextTitle); }
+.hot-widget-preview__tagline { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--fontWeightRegular) 12px/15px var(--fontFamily); color: var(--slateTextSubtle); }
+.hot-widget-preview__online { position: absolute; right: 18px; top: 42px; width: 10px; height: 10px; box-sizing: border-box; border: 2px solid var(--slateSurfaceWhite); border-radius: 9999px; background: var(--successSurfaceDark); }
+.hot-widget-preview__content { display: flex; flex: 1; flex-direction: column; min-height: 0; background: linear-gradient(to bottom, color-mix(in srgb, var(--widget-color) 10%, transparent), transparent 18.5%); }
+.hot-widget-preview__hero { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0 12px; text-align: center; }
+.hot-widget-preview__greeting { margin: 0; font: var(--fontWeightMedium) 18px/22px var(--fontFamily); color: var(--slateTextTitle); }
+.hot-widget-preview__hivey { background: linear-gradient(66.6deg, var(--pastelYellowSurfaceDefault) 18%, var(--pastelPurpleSurfaceDefault) 61%, var(--widget-color) 79%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hot-widget-preview__intro { margin: 0; font: var(--fontWeightRegular) 14px/17px var(--fontFamily); color: var(--slateTextBody); }
+.hot-widget-preview__footer { padding: 20px; }
+.hot-widget-preview__start { width: 100%; min-height: 34px; padding: 8px 12px; border: 1px solid var(--widget-color); border-radius: 10px; background: var(--widget-color); color: var(--slateSurfaceWhite); font: var(--fontWeightMedium) 13px/16px var(--fontFamily); cursor: pointer; }
