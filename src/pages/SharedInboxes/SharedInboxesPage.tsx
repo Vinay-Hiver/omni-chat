@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
 import type { IconName } from '../../icons/iconData'
 import { Button } from '../../components/Button'
@@ -24,7 +24,7 @@ function ChannelIcon({ icon }: { icon: IconName }) {
 }
 
 /** The heading bar over a page's content: 60px tall, a line under it, the page name on the left. */
-export function PageBar({ title, action }: { title: string; action?: ReactNode }) {
+export function PageBar({ title, action }: { title: ReactNode; action?: ReactNode }) {
   return <div className="hot-shared-inboxes__bar"><h1 className="hot-shared-inboxes__bar-title">{title}</h1>{action}</div>
 }
 
@@ -37,6 +37,8 @@ export type SharedInboxesPageProps = {
   inboxId?: string
   /** Which page of the inbox settings is selected when an inbox is open. Defaults to the channel's first page. */
   settingsItem?: string
+  /** The page shown for a chat inbox's Widget Design. Defaults to the built page; /options swaps in the layout options. */
+  widgetDesign?: ComponentType
   /** Called with the id of the Main nav item that was pressed (for example `conversations`). */
   onNavigate?: (id: string) => void
 }
@@ -46,7 +48,7 @@ export type SharedInboxesPageProps = {
  * Pressing an inbox opens its settings: the sub-nav then lists that channel's settings pages, from the Sub-nav database.
  * Temporary: the settings pages themselves are not built yet, so the content shows a placeholder.
  */
-export function SharedInboxesPage({ channel: initialChannel = 'email', inboxId, settingsItem, onAdminNavigate, onNavigate }: SharedInboxesPageProps) {
+export function SharedInboxesPage({ channel: initialChannel = 'email', inboxId, settingsItem, onAdminNavigate, onNavigate, widgetDesign: WidgetDesign = WidgetDesignPage }: SharedInboxesPageProps) {
   const [channelId, setChannelId] = useState<SubNavChannelId>(initialChannel)
   const [lists, setLists] = useState<Record<string, Inbox[]>>(() => Object.fromEntries(sharedInboxChannels.map((c) => [c.id, c.inboxes])))
   const found = inboxId ? sharedInboxChannels.flatMap((c) => c.inboxes.map((i) => ({ channel: c.id, inbox: i }))).find((x) => x.inbox.id === inboxId) : undefined
@@ -82,7 +84,7 @@ export function SharedInboxesPage({ channel: initialChannel = 'email', inboxId, 
         onSwitch={(id) => { const next = (lists[open.channel] ?? []).find((i) => i.id === id); if (next) setOpen({ channel: open.channel, inbox: next }) }}
       />
     )
-    content = selected.id === 'widgetDesign' ? <WidgetDesignPage /> : (
+    content = selected.id === 'widgetDesign' ? <WidgetDesign /> : (
       <div className="hot-shared-inboxes__page">
         <PageBar title={selected.label} />
         <div className="hot-shared-inboxes__placeholder">{selected.label} page</div>
