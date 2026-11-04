@@ -175,12 +175,12 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
           <Input label={<>Widget heading <span className="hot-cci__required">*</span></>} value={heading} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => setHeading(e.target.value)} />
           {/* Same as Widget Design > Launcher icon. */}
           <div className="hot-wd-field">
-            <span className="hot-wd-label">Launcher icon</span>
+            <span className="hot-wd-label">Bubble icon</span>
             <div className="hot-wd-logo-box hot-wd-logo-box--stack">
               <div className="hot-wd-logo-row">
                 <span className="hot-wd-logo hot-wd-logo--launcher" style={style}>
                   {launcherShown ? <img src={launcherShown.url} alt={`Launcher icon: ${launcherShown.name}`} /> : <Icon name="chatsupport" size={16} />}
-                  {launcherShown && <button type="button" className="hot-wd-logo__remove" aria-label="Remove launcher icon" onClick={removeLauncherIcon}><Icon name="close" size={14} /></button>}
+                  {launcherShown && <button type="button" className="hot-wd-logo__remove" aria-label="Remove bubble icon" onClick={removeLauncherIcon}><Icon name="close" size={14} /></button>}
                 </span>
                 <div className="hot-wd-logo-row__text">
                   {launcherUsesLogo
@@ -192,17 +192,16 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
               </div>
               {/* Disabled until there's a widget logo; the tooltip says how to turn it on. */}
               {logo ? (
-                <Checkbox label="Use the same logo as widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { setLauncherUseLogo(e.target.checked); setPreview('launcher') }} />
+                <Checkbox label="Use the widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { setLauncherUseLogo(e.target.checked); setPreview('launcher') }} />
               ) : (
                 <Tooltip content="Add a widget logo to use it here">
-                  <span className="hot-wd-tip-target"><Checkbox label="Use the same logo as widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { setLauncherUseLogo(e.target.checked); setPreview('launcher') }} /></span>
+                  <span className="hot-wd-tip-target"><Checkbox label="Use the widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { setLauncherUseLogo(e.target.checked); setPreview('launcher') }} /></span>
                 </Tooltip>
               )}
             </div>
           </div>
           <Input
-            label="Launcher label" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="e.g., Chat with us"
-            helperText="Optional. Shown next to the launcher; leave it empty for the icon only."
+            label="Bubble text" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="e.g., Chat with us"
             onFocus={() => setPreview('launcher')} onChange={(e) => setLauncherLabel(e.target.value)}
           />
 
@@ -216,10 +215,10 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
         <div className="hot-wd-preview" style={style}>
           <Tabs
             className="hot-wd-preview__tabs" variant="filled" aria-label="Preview" value={preview} onChange={(v) => setPreview(v as Preview)}
-            tabs={[{ value: 'home', label: 'Home' }, { value: 'launcher', label: 'Launcher' }]}
+            tabs={[{ value: 'home', label: 'Home' }, { value: 'launcher', label: 'Chat bubble' }]}
           />
           {preview === 'launcher' ? (
-            <div className="hot-wd-site" aria-label="Launcher preview on a website">
+            <div className="hot-wd-site" aria-label="Chat bubble preview on a website">
               <div className="hot-wd-site__bar"><span /><span /><span /></div>
               <div className="hot-wd-site__body"><span className="hot-wd-site__line hot-wd-site__line--title" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line hot-wd-site__line--short" /></div>
               <div className="hot-wd-site__launcher">

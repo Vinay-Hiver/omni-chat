@@ -318,7 +318,7 @@ export function WidgetDesignPage() {
           {layout === 'tabs' && (
             <Tabs
               className="hot-wd__group-tabs" aria-label="Settings" value={open ?? 'appearance'} onChange={(v) => showTab(v as GroupId)}
-              tabs={[{ value: 'appearance', label: 'Appearance' }, { value: 'launcher', label: 'Launcher' }, { value: 'conversation', label: 'Conversation' }]}
+              tabs={[{ value: 'appearance', label: 'Appearance' }, { value: 'launcher', label: 'Chat bubble' }, { value: 'conversation', label: 'Chat window' }]}
             />
           )}
           <Group title="Appearance" open={open === 'appearance'} onToggle={() => toggle('appearance')} layout={layout}>
@@ -360,20 +360,18 @@ export function WidgetDesignPage() {
             <Input label="Widget heading" value={heading} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setHeading)(e.target.value)} />
             <Input label="Widget tagline" value={tagline} maxLength={40} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setTagline)(e.target.value)} />
             <Input
-              label="Greeting" value={greeting} maxLength={30} suffix={{ count: true }} fullWidth placeholder={DEFAULT_GREETING}
-              helperText="The large line on the home screen. Leave it empty to use the default."
+              label="Welcome title" value={greeting} maxLength={30} suffix={{ count: true }} fullWidth placeholder={DEFAULT_GREETING}
               onFocus={() => setPreview('home')} onChange={(e) => edit(setGreeting)(e.target.value)}
             />
             <Textarea
               label="Welcome message" value={welcome} maxLength={120} showCount={welcome.length > 100} fullWidth rows={3} placeholder={DEFAULT_WELCOME}
-              helperText="Shown under the greeting. Leave it empty to use the default."
               onFocus={() => setPreview('home')} onChange={(e) => edit(setWelcome)(e.target.value)}
             />
           </Group>
 
-          <Group title="Launcher" open={open === 'launcher'} onToggle={() => toggle('launcher')} layout={layout}>
+          <Group title="Chat bubble" open={open === 'launcher'} onToggle={() => toggle('launcher')} layout={layout}>
             <div className="hot-wd-field">
-              <span className="hot-wd-label">Launcher icon</span>
+              <span className="hot-wd-label">Bubble icon</span>
               <div className="hot-wd-logo-box hot-wd-logo-box--stack">
                 <div className="hot-wd-logo-row">
                   {/* Same pattern as Widget logo. With no upload, the default launcher shows, so the admin can match it to the preview. */}
@@ -381,7 +379,7 @@ export function WidgetDesignPage() {
                     {/* Shows what the launcher will show: the widget logo while the box below is ticked. */}
                     {launcherShown ? <img src={launcherShown.url} alt={`Launcher icon: ${launcherShown.name}`} /> : <Icon name="chatsupport" size={16} />}
                     {launcherShown && (
-                      <button type="button" className="hot-wd-logo__remove" aria-label="Remove launcher icon" onClick={removeLauncherIcon}>
+                      <button type="button" className="hot-wd-logo__remove" aria-label="Remove bubble icon" onClick={removeLauncherIcon}>
                         <Icon name="close" size={14} />
                       </button>
                     )}
@@ -401,28 +399,26 @@ export function WidgetDesignPage() {
                 {/* On by default: most admins want their logo on the launcher. Uploading an icon above turns it off. */}
                 {/* Disabled until there's a widget logo; the tooltip says how to turn it on. */}
                 {logo ? (
-                  <Checkbox label="Use the same logo as widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { edit(setLauncherUseLogo)(e.target.checked); setPreview('launcher') }} />
+                  <Checkbox label="Use the widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { edit(setLauncherUseLogo)(e.target.checked); setPreview('launcher') }} />
                 ) : (
                   <Tooltip content="Add a widget logo to use it here">
-                    <span className="hot-wd-tip-target"><Checkbox label="Use the same logo as widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { edit(setLauncherUseLogo)(e.target.checked); setPreview('launcher') }} /></span>
+                    <span className="hot-wd-tip-target"><Checkbox label="Use the widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { edit(setLauncherUseLogo)(e.target.checked); setPreview('launcher') }} /></span>
                   </Tooltip>
                 )}
               </div>
             </div>
 
             <Input
-              label="Launcher label" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="Chat with us"
-              helperText={launcherLabel ? 'If your widget script sets a launcher label, visitors see that one instead.' : 'Optional. Turns the launcher into a pill.'}
+              label="Bubble text" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="Chat with us"
               onFocus={() => setPreview('launcher')} onChange={(e) => edit(setLauncherLabel)(e.target.value)}
             />
             <Input
-              label="Launcher tooltip" value={launcherTooltip} maxLength={60} suffix={{ count: true }} fullWidth placeholder="We reply in minutes"
-              helperText="Optional. Shows on hover and keyboard focus, not on touch screens."
+              label="Hover text" value={launcherTooltip} maxLength={60} suffix={{ count: true }} fullWidth placeholder="We reply in minutes"
               onFocus={() => setPreview('launcher')} onChange={(e) => edit(setLauncherTooltip)(e.target.value)}
             />
           </Group>
 
-          <Group title="Conversation" open={open === 'conversation'} onToggle={() => toggle('conversation')} layout={layout}>
+          <Group title="Chat window" open={open === 'conversation'} onToggle={() => toggle('conversation')} layout={layout}>
             {/* Figma 30:20320 */}
             <div className="hot-wd-section">
               <span className="hot-wd-section__title">How should agents appear to visitors?</span>
@@ -453,11 +449,11 @@ export function WidgetDesignPage() {
         <div className="hot-wd-preview" style={widgetStyle}>
           <Tabs
             className="hot-wd-preview__tabs" variant="filled" aria-label="Preview" value={preview} onChange={(v) => setPreview(v as Preview)}
-            tabs={[{ value: 'home', label: 'Home' }, { value: 'launcher', label: 'Launcher' }, { value: 'chat', label: 'Chat' }]}
+            tabs={[{ value: 'home', label: 'Home' }, { value: 'launcher', label: 'Chat bubble' }, { value: 'chat', label: 'Chat window' }]}
           />
 
           {preview === 'launcher' ? (
-            <div className="hot-wd-site" aria-label="Launcher preview on a website">
+            <div className="hot-wd-site" aria-label="Chat bubble preview on a website">
               <div className="hot-wd-site__bar"><span /><span /><span /></div>
               <div className="hot-wd-site__body"><span className="hot-wd-site__line hot-wd-site__line--title" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line hot-wd-site__line--short" /></div>
               <div className="hot-wd-site__launcher">
