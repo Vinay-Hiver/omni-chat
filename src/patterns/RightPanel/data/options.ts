@@ -12,7 +12,7 @@ export const statusOptions: StatusOption[] = [
 /** A person who can own a conversation. Example people for the stories; a product would load them. */
 export type Assignee = { value: string; label: string; color: AvatarColor; status?: 'online' | 'offline' }
 export const sampleAssignees: Assignee[] = [
-  { value: 'michael', label: 'Michael Scott (Me)', color: 'red' },
+  { value: 'john-cole', label: 'John Cole (Me)', color: 'red' },
   { value: 'abhay', label: 'Abhay', color: 'yellow' },
   { value: 'adithya', label: 'Adithya S', color: 'grey' },
   { value: 'aishwarya', label: 'Aishwarya test sm 2', color: 'grey' },

@@ -28,7 +28,8 @@
 .chat-message--outgoing { align-self: flex-end; align-items: flex-end; }
 .chat-bubble { font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextTitle); }
 .chat-bubble--incoming { padding: 8px 12px; border-radius: 12px; background: var(--primarySurfaceSubtle); }
-.chat-bubble--outgoing { padding: 12px; border-radius: 8px; background: var(--primarySurfaceDefault); color: var(--slateSurfaceWhite); }
+.chat-bubble--outgoing { padding: 8px 12px; border-radius: 8px; background: var(--primarySurfaceDefault); color: var(--slateSurfaceWhite); }
+.chat-event { align-self: center; padding: 8px 0 12px; font: var(--fontWeightRegular) 12px/18px var(--fontFamily); color: var(--slateTextSubtle); }
 .chat-message__meta { font: var(--fontWeightRegular) 12px/18px var(--fontFamily); color: var(--slateTextSubtle); }
 .chat-panel__composer-wrap { flex: none; padding: 20px; }
 .chat-composer { display: flex; flex-direction: column; height: 148px; overflow: visible; border: 1px solid var(--slateBorderLight); border-radius: 8px; background: var(--slateSurfaceWhite); }

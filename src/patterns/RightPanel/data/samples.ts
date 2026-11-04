@@ -80,7 +80,7 @@ export const samples: Record<ChannelId, ChannelSample> = {
       {
         day: 'Yesterday',
         items: [
-          { text: 'Michael Scott self-assigned this conversation', time: '05:00 PM' },
+          { text: 'John Cole self-assigned this conversation', time: '05:00 PM' },
           { text: 'Harini L created a new ticket', time: '12:50 PM' },
         ],
       },

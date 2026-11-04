@@ -26,7 +26,7 @@ export type WidgetSettings = {
 }
 
 export const DEFAULT_WELCOME = 'We are here to help you'
-export const SAMPLE_AGENT = 'Praveen Borawar'
+export const SAMPLE_AGENT = 'John Cole'
 export const VERIFICATION_SECRET = 'hv_live_7f3a9c21e84b4d0f9a6e52c1b8d3f047'
 export const MAX_LAUNCHER_BYTES = 1024 * 1024
 

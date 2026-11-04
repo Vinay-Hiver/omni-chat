@@ -4,6 +4,7 @@ import { Avatar } from '../../components/Avatar'
 import { Button } from '../../components/Button'
 import { Icon } from '../../icons/Icon'
 import type { ChatConversation, ChatMessage } from './data'
+import { ME, addLiveMessage } from './liveChats'
 
 // Canned replies that simulate the visitor answering, as in the linked-conversations prototype.
 const RANDOM_REPLIES = ['Thanks, got it!', 'Sure, let me check.', 'Sounds good 👍', 'On it!', 'Perfect, appreciate it.', 'Okay, will do.', 'Great, thanks for the update.']
@@ -33,6 +34,7 @@ function EmojiPicker({ onSelect }: { onSelect: (emoji: string) => void }) {
 }
 
 function Message({ m }: { m: ChatMessage }) {
+  if (m.kind === 'event') return <div className="chat-event">{m.text}</div>
   if (m.kind === 'incoming') {
     return (
       <div className="chat-message chat-message--incoming">
@@ -44,24 +46,28 @@ function Message({ m }: { m: ChatMessage }) {
   return (
     <div className="chat-message chat-message--outgoing">
       <div className="chat-bubble chat-bubble--outgoing">{m.text}</div>
-      <span className="chat-message__meta">{m.sender ?? 'Arnold'} - {m.time}</span>
+      <span className="chat-message__meta">{m.sender ?? ME.name} - {m.time}</span>
     </div>
   )
 }
 
-/** The middle column: the visitor's name, the chat thread and the reply box. Sending a message brings back a canned reply after 2s. */
+/**
+ * The middle column: the visitor's name, the chat thread and the reply box. In a live chat the reply goes to the
+ * visitor's tab; in the sample chats a canned reply comes back after 2s.
+ */
 export function ChatPanel({ conversation }: { conversation: ChatConversation }) {
   const [sent, setSent] = useState<ChatMessage[]>([])
   const [text, setText] = useState('')
   const threadRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight }, [sent])
+  useEffect(() => { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight }, [sent, conversation.messages.length])
 
   const send = () => {
     const value = text.trim()
     if (!value) return
-    setSent((prev) => [...prev, { kind: 'agent-text', text: value, time: formatNow(), sender: 'Arnold' }])
     setText('')
+    if (conversation.live) { addLiveMessage(conversation.id, { from: 'agent', text: value }); return }
+    setSent((prev) => [...prev, { kind: 'agent-text', text: value, time: formatNow(), sender: ME.name }])
     setTimeout(() => setSent((prev) => [...prev, { kind: 'incoming', text: randomReply(), time: formatNow() }]), 2000)
   }
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }

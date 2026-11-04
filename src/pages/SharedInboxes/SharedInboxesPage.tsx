@@ -9,7 +9,7 @@ import { AdminSidebar } from '../../patterns/AdminSidebar'
 import { adminSampleSections } from '../../patterns/AdminSidebar/sampleData'
 import { EmptyState } from '../../patterns/EmptyState'
 import { MainNav } from '../../patterns/MainNav'
-import { navSampleFooterItems, navSampleItems, navSampleUserMenu } from '../../patterns/MainNav/sampleData'
+import { navSampleFooterItems, navSampleItems } from '../../patterns/MainNav/sampleData'
 import { PageLayout } from '../../patterns/PageLayout'
 import { SubNav } from '../../patterns/SubNav'
 import { getSubNav } from '../../patterns/SubNav/data'
@@ -66,7 +66,7 @@ export function SharedInboxesPage({ channel: initialChannel = 'email', inboxId, 
     { key: 'actions', width: 100 },
   ]
 
-  const nav = <MainNav items={navSampleItems} footerItems={navSampleFooterItems} value="admin" onChange={onNavigate} user={{ initial: 'A', name: 'Alex' }} userMenu={navSampleUserMenu} />
+  const nav = <MainNav items={navSampleItems} footerItems={navSampleFooterItems} value="admin" onChange={onNavigate} user={{ initial: 'J', name: 'John Cole' }} />
   const sidebar = <AdminSidebar sections={adminSampleSections} value="shared-inbox" onChange={onAdminNavigate} />
 
   let subNav: ReactNode

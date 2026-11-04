@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, CSSProperties, ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
 import { Button } from '../../components/Button'
+import { Dropdown } from '../../components/Dropdown'
 import { Input } from '../../components/Input'
 import { Popover } from '../../components/Popover'
 import { Radio, RadioGroup } from '../../components/Radio'
@@ -10,12 +11,13 @@ import { Tabs } from '../../components/Tabs'
 import { Tag } from '../../components/Tag'
 import { Textarea } from '../../components/Textarea'
 import { ColorPicker, cssToHsv, hsvToHex } from './ColorPicker'
+import { DEFAULT_WELCOME, loadSettings, readAsDataUrl, saveSettings } from './widgetSettings'
+import type { WidgetSettings } from './widgetSettings'
 import type { Hsv } from './ColorPicker'
 import { PageBar } from '../SharedInboxes/SharedInboxesPage'
 import './WidgetDesignPage.css'
 
-const DEFAULT_WELCOME = 'We are here to help you'
-const SAMPLE_AGENT = 'Praveen Borawar'
+const SAMPLE_AGENT = 'John Cole'
 const VERIFICATION_SECRET = 'hv_live_7f3a9c21e84b4d0f9a6e52c1b8d3f047'
 const MAX_LAUNCHER_BYTES = 1024 * 1024
 const MAX_LOGO_PX = 250
@@ -23,7 +25,7 @@ const DEFAULT_LOGO = '/widget/logo-placeholder.svg' // Figma 28:19568, shown unt
 const AVATARS = ['/widget/avatar-1.jpg', '/widget/avatar-2.png', '/widget/avatar-3.png', '/widget/avatar-4.jpg']
 
 /** The widget colour starts on the violet token; picking a colour replaces it with that colour. */
-const DEFAULT_COLOR = '--primaryPurpleSurfaceDefault'
+const DEFAULT_COLOR = '--primarySurfaceDefault'
 
 type GroupId = 'appearance' | 'launcher' | 'conversation'
 type Preview = 'home' | 'launcher' | 'chat'
@@ -82,34 +84,40 @@ function ToggleCard({ title, description, checked, onChange, children }: { title
  * follows the open group and updates as the admin types (R8).
  */
 export function WidgetDesignPage() {
-  const [layout, setLayout] = useState<Layout>('cards')
+  const [layout, setLayout] = useState<Layout>('tabs')
   const [open, setOpen] = useState<GroupId | null>('appearance')
   const [preview, setPreview] = useState<Preview>('home')
+  // Every setting starts from the last save, so a reload shows what was saved.
+  const [saved] = useState(loadSettings)
   // Appearance
-  const [color, setColor] = useState(`var(${DEFAULT_COLOR})`)
-  const [hsv, setHsv] = useState<Hsv>(() => cssToHsv(getComputedStyle(document.documentElement).getPropertyValue(DEFAULT_COLOR)))
+  const [color, setColor] = useState(saved.color)
+  const [hsv, setHsv] = useState<Hsv>(() => saved.hsv ?? cssToHsv(getComputedStyle(document.documentElement).getPropertyValue(DEFAULT_COLOR)))
+  const [hsvPicked, setHsvPicked] = useState(saved.hsv !== null)
   const [colorMenu, setColorMenu] = useState(false)
-  const [heading, setHeading] = useState('Support Team')
-  const [tagline, setTagline] = useState('Ask us anything')
-  const [welcome, setWelcome] = useState(DEFAULT_WELCOME)
-  const [logo, setLogo] = useState<{ url: string; name: string } | null>(null)
+  const [optionsMenu, setOptionsMenu] = useState(false)
+  const [heading, setHeading] = useState(saved.heading)
+  const [tagline, setTagline] = useState(saved.tagline)
+  const [welcome, setWelcome] = useState(saved.welcome)
+  const [logo, setLogo] = useState(saved.logo)
   const [logoError, setLogoError] = useState<string | null>(null)
   // Launcher (R2–R4)
-  const [launcherIcon, setLauncherIcon] = useState<{ url: string; name: string } | null>(null)
+  const [launcherIcon, setLauncherIcon] = useState(saved.launcherIcon)
   const [launcherError, setLauncherError] = useState<string | null>(null)
-  const [launcherLabel, setLauncherLabel] = useState('')
-  const [launcherTooltip, setLauncherTooltip] = useState('')
+  const [launcherLabel, setLauncherLabel] = useState(saved.launcherLabel)
+  const [launcherTooltip, setLauncherTooltip] = useState(saved.launcherTooltip)
   // Conversation (R5, R7)
-  const [agentName, setAgentName] = useState<AgentName>('full')
-  const [filePicker, setFilePicker] = useState(true)
-  const [csat, setCsat] = useState(true)
-  const [history, setHistory] = useState(false)
-  const [historyDesign, setHistoryDesign] = useState<HistoryDesign>('menu')
+  const [agentName, setAgentName] = useState<AgentName>(saved.agentName)
+  const [filePicker, setFilePicker] = useState(saved.filePicker)
+  const [csat, setCsat] = useState(saved.csat)
+  const [history, setHistory] = useState(saved.history)
+  const [historyDesign, setHistoryDesign] = useState<HistoryDesign>(saved.historyDesign)
   const [chatView, setChatView] = useState<'chat' | 'history'>('chat')
   const [chatMenu, setChatMenu] = useState(false)
   const [copied, setCopied] = useState(false)
   const [dirty, setDirty] = useState(false)
+  const [saveError, setSaveError] = useState(false)
   const swatchRef = useRef<HTMLButtonElement>(null)
+  const optionsRef = useRef<HTMLButtonElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const logoRef = useRef<HTMLInputElement>(null)
   const chatMenuRef = useRef<HTMLSpanElement>(null)
@@ -135,10 +143,13 @@ export function WidgetDesignPage() {
     // Errors show inline and the previous icon is kept (R2).
     if (!['image/png', 'image/jpeg'].includes(file.type)) { setLauncherError('Use a PNG or JPG image. SVG and GIF aren’t supported.'); return }
     if (file.size > MAX_LAUNCHER_BYTES) { setLauncherError('This image is over 1 MB. Try a smaller one.'); return }
-    setLauncherError(null)
-    setLauncherIcon({ url: URL.createObjectURL(file), name: file.name })
-    setDirty(true)
-    setPreview('launcher')
+    // Kept as a data URL, so the saved icon also shows after a reload.
+    readAsDataUrl(file).then((url) => {
+      setLauncherError(null)
+      setLauncherIcon({ url, name: file.name })
+      setDirty(true)
+      setPreview('launcher')
+    }, () => setLauncherError('This image couldn’t be read. Try another file.'))
   }
 
   // The widget logo: PNG or JPG, at most 250 × 250 px. A refused image keeps the current logo. "Change logo" replaces it.
@@ -147,11 +158,10 @@ export function WidgetDesignPage() {
     e.target.value = ''
     if (!file) return
     if (!['image/png', 'image/jpeg'].includes(file.type)) { setLogoError('Use a PNG or JPG image.'); return }
-    const url = URL.createObjectURL(file)
+    readAsDataUrl(file).then((url) => {
     const img = new Image()
     img.onload = () => {
       if (img.naturalWidth > MAX_LOGO_PX || img.naturalHeight > MAX_LOGO_PX) {
-        URL.revokeObjectURL(url)
         setLogoError(`Choose an image less than ${MAX_LOGO_PX} × ${MAX_LOGO_PX} pixels.`)
         return
       }
@@ -160,8 +170,34 @@ export function WidgetDesignPage() {
       setDirty(true)
       setPreview('home')
     }
-    img.onerror = () => { URL.revokeObjectURL(url); setLogoError('This image couldn’t be read. Try another file.') }
+    img.onerror = () => setLogoError('This image couldn’t be read. Try another file.')
     img.src = url
+    }, () => setLogoError('This image couldn’t be read. Try another file.'))
+  }
+
+  // Try Widget: a modal with an empty page and the live widget in its corner, using the settings as they are now.
+  const [trying, setTrying] = useState(false)
+  // 'closing' keeps the widget on screen while it plays its exit animation.
+  const [tryState, setTryState] = useState<'closed' | 'open' | 'closing'>('closed')
+  const tryOpen = tryState === 'open'
+  // After a click on the launcher, its tooltip stays hidden until the pointer leaves and comes back.
+  const [tipQuiet, setTipQuiet] = useState(false)
+  const tryWidget = () => { setTrying(true); setTryState('closed') }
+  useEffect(() => {
+    if (!trying) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setTrying(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [trying])
+
+  const save = () => {
+    const settings: WidgetSettings = {
+      color, hsv: hsvPicked ? hsv : null, heading, tagline, welcome, logo, launcherIcon, launcherLabel, launcherTooltip,
+      agentName, filePicker, csat, history, historyDesign,
+    }
+    const ok = saveSettings(settings)
+    setSaveError(!ok)
+    if (ok) setDirty(false)
   }
 
   const copySecret = () => {
@@ -176,18 +212,58 @@ export function WidgetDesignPage() {
   const agentShown = agentName === 'full' ? SAMPLE_AGENT : agentName === 'first' ? SAMPLE_AGENT.split(' ')[0] : headingShown
   const widgetStyle = { '--widget-color': color } as CSSProperties
   const showHistory = history && chatView === 'history'
+  // Design A: the ⋮ menu holds Previous conversations and End chat.
+  const historyMenu = history && historyDesign === 'menu' && (
+    <span className="hot-wd-menu-anchor" ref={chatMenuRef}>
+      <button type="button" className={`hot-wd-icon-btn${chatMenu ? ' hot-wd-icon-btn--on' : ''}`} aria-label="More options" aria-haspopup="menu" aria-expanded={chatMenu} onClick={() => setChatMenu((o) => !o)}>
+        <DotsVertical />
+      </button>
+      {chatMenu && (
+        <span className="hot-wd-menu" role="menu">
+          <button type="button" role="menuitem" onClick={() => { setChatMenu(false); setChatView('history'); setPreview('chat') }}><span className="hot-wd-mask hot-wd-mask--16" style={{ '--mask': 'url(/widget/clock-fast-forward.svg)' } as CSSProperties} />Previous conversations</button>
+          <button type="button" role="menuitem" onClick={() => setChatMenu(false)}><Icon name="logout" size={16} />End chat</button>
+        </span>
+      )}
+    </span>
+  )
+
   // Design B: a Chat / History bar under the widget.
   const historyNav = history && historyDesign === 'nav' && (
     <nav className="hot-wd-nav" aria-label="Widget">
       <button type="button" aria-current={!showHistory || undefined} onClick={() => setChatView('chat')}>
         <span className="hot-wd-mask" style={{ '--mask': 'url(/widget/message-dots-circle.svg)' } as CSSProperties} />Chat
       </button>
-      <button type="button" aria-current={showHistory || undefined} onClick={() => setChatView('history')}>
+      <button type="button" aria-current={showHistory || undefined} onClick={() => { setChatView('history'); setPreview('chat') }}>
         <span className="hot-wd-mask" style={{ '--mask': 'url(/widget/clock-fast-forward.svg)' } as CSSProperties} />History
       </button>
     </nav>
   )
-  const pickColor = (next: Hsv) => { setHsv(next); edit(setColor)(hsvToHex(next)); setPreview('home') }
+  // The widget's home screen, shared by the preview and the Try Widget modal.
+  const homeView = (
+      <>
+        <div className="hot-wd-widget__header">
+          <img className="hot-wd-widget__logo" src={logo?.url ?? DEFAULT_LOGO} width={40} height={40} alt="" />
+          <div className="hot-wd-widget__titles">
+            <span className="hot-wd-widget__title">{headingShown}</span>
+            <span className="hot-wd-widget__subtitle">{tagline}</span>
+          </div>
+          {historyMenu}
+        </div>
+        <div className="hot-wd-home">
+          <div className="hot-wd-home__hero">
+            <div className="hot-wd-avatars">{AVATARS.map((src) => <img key={src} src={src} width={32} height={32} alt="" />)}</div>
+            <div className="hot-wd-home__text">
+              <p className="hot-wd-home__greeting">Hi there!</p>
+              <p className="hot-wd-home__welcome">{welcomeShown}</p>
+            </div>
+          </div>
+        </div>
+        <div className="hot-wd-widget__footer"><span className="hot-wd-start">Start Conversation</span></div>
+        {historyNav}
+      </>
+  )
+
+  const pickColor = (next: Hsv) => { setHsv(next); setHsvPicked(true); edit(setColor)(hsvToHex(next)); setPreview('home') }
 
   return (
     <div className="hot-wd">
@@ -195,15 +271,36 @@ export function WidgetDesignPage() {
         title={
           <span className="hot-wd__title">
             Widget Design
-            <Tabs className="hot-wd__layout" variant="filled" aria-label="Layout" value={layout} onChange={(v) => switchLayout(v as Layout)} tabs={[{ value: 'cards', label: 'Cards' }, { value: 'tabs', label: 'Tabs' }]} />
-            <Tabs
-              className="hot-wd__layout" variant="filled" aria-label="Previous conversations design" value={historyDesign}
-              onChange={(v) => { setHistoryDesign(v as HistoryDesign); setChatView('chat'); setChatMenu(false); setPreview('chat') }}
-              tabs={[{ value: 'menu', label: 'Menu' }, { value: 'nav', label: 'Bottom nav' }]}
-            />
+            <button
+              ref={optionsRef} type="button" className="hot-wd-options" aria-haspopup="true" aria-expanded={optionsMenu}
+              onClick={() => setOptionsMenu((o) => !o)}
+            >
+              Design options
+              <Icon name="chevrondown" size={16} />
+            </button>
+            <Popover open={optionsMenu} onClose={() => setOptionsMenu(false)} anchorRef={optionsRef}>
+              <div className="hot-wd-options__menu">
+                <Dropdown
+                  variant="radio" title="Widget design layout" value={layout}
+                  onChange={(v) => switchLayout(v as Layout)}
+                  options={[{ value: 'cards', label: 'Cards' }, { value: 'tabs', label: 'Tabs' }]}
+                />
+                <Dropdown
+                  variant="radio" title="Previous chat" value={historyDesign}
+                  onChange={(v) => { edit(setHistoryDesign)(v as HistoryDesign); setChatView('chat'); setChatMenu(false); setPreview('chat') }}
+                  options={[{ value: 'nav', label: 'Bottom nav' }, { value: 'menu', label: 'Overflow menu' }]}
+                />
+              </div>
+            </Popover>
           </span>
         }
-        action={<Button variant="secondary-filled" size="sm" iconLeft={<Icon name="newtab" size={16} />}>Try Widget</Button>} />
+        action={
+          <span className="hot-wd__actions-bar">
+            <Button variant="secondary-filled" size="sm" onClick={tryWidget}>Try Widget</Button>
+            {/* The visitor's side on its own page, as a stakeholder would see it on a website. */}
+            <Button variant="secondary-filled" size="sm" iconLeft={<Icon name="newtab" size={16} />} onClick={() => window.open('/chat-interaction', '_blank', 'noopener')}>Open in new tab</Button>
+          </span>
+        } />
 
       <div className="hot-wd__body">
         <div className={`hot-wd__form hot-wd__form--${layout}`}>
@@ -250,7 +347,7 @@ export function WidgetDesignPage() {
             </div>
 
             <Input label="Widget heading" value={heading} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setHeading)(e.target.value)} />
-            <Input label="Widget tagline" value={tagline} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setTagline)(e.target.value)} />
+            <Input label="Widget tagline" value={tagline} maxLength={40} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setTagline)(e.target.value)} />
             <Textarea
               label="Welcome message" value={welcome} maxLength={120} showCount={welcome.length > 100} fullWidth rows={3} placeholder={DEFAULT_WELCOME}
               helperText="Shown under “Hi there!”. Leave it empty to use the default."
@@ -298,8 +395,8 @@ export function WidgetDesignPage() {
             {/* Figma 30:20320 */}
             <div className="hot-wd-section">
               <span className="hot-wd-section__title">How should agents appear to visitors?</span>
-              <RadioGroup name="hot-wd-agent-name" value={agentName} onChange={(v) => { edit(setAgentName)(v as AgentName); setPreview('chat') }}>
-                <Radio value="full" label={<>Full name <em className="hot-wd-option-eg">(e.g., John Acme)</em></>} />
+              <RadioGroup className="hot-wd-radios" name="hot-wd-agent-name" value={agentName} onChange={(v) => { edit(setAgentName)(v as AgentName); setPreview('chat') }}>
+                <Radio value="full" label={<>Full name <em className="hot-wd-option-eg">(e.g., John Cole)</em></>} />
                 <Radio value="first" label={<>First name <em className="hot-wd-option-eg">(e.g., John)</em></>} />
                 <Radio value="hidden" label="Name hidden" />
               </RadioGroup>
@@ -314,9 +411,8 @@ export function WidgetDesignPage() {
                 title="Previous conversations" description="Returning visitors can see and continue past chats with this inbox."
                 checked={history} onChange={(v) => { edit(setHistory)(v); setChatView('chat'); setPreview('chat') }}
               >
-                <span className="hot-wd-card__desc">Anonymous history stays browser-specific; signed-in users sync across devices.</span>
                 <Input label="Identity verification secret" value={VERIFICATION_SECRET} readOnly fullWidth size="sm" action={{ label: copied ? 'Copied' : 'Copy', onClick: copySecret }} />
-                <a className="hot-wd-link" href="#identity-verification" onClick={(e) => e.preventDefault()}><Icon name="code" size={14} />Developer setup guide</a>
+                <span className="hot-wd-card__desc">Anonymous history stays browser-specific; signed-in users sync across devices.</span>
               </ToggleCard>
               </div>
             </div>
@@ -344,26 +440,7 @@ export function WidgetDesignPage() {
           ) : (
             <div className="hot-wd-widget" aria-label="Widget preview">
               {preview === 'home' ? (
-                <>
-                  <div className="hot-wd-widget__header">
-                    {/* 48px logo in a 52px box. The 2px ring shows in the widget colour only with a tagline, so the header never shifts. */}
-                    <img className={`hot-wd-widget__logo${tagline.trim() ? ' hot-wd-widget__logo--ring' : ''}`} src={logo?.url ?? DEFAULT_LOGO} width={52} height={52} alt="" />
-                    <div className="hot-wd-widget__titles">
-                      <span className="hot-wd-widget__title">{headingShown}</span>
-                      <span className="hot-wd-widget__subtitle">{tagline}</span>
-                    </div>
-                  </div>
-                  <div className="hot-wd-home">
-                    <div className="hot-wd-home__hero">
-                      <div className="hot-wd-avatars">{AVATARS.map((src) => <img key={src} src={src} width={32} height={32} alt="" />)}</div>
-                      <div className="hot-wd-home__text">
-                        <p className="hot-wd-home__greeting">Hi there!</p>
-                        <p className="hot-wd-home__welcome">{welcomeShown}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="hot-wd-widget__footer"><span className="hot-wd-start">Start Conversation</span></div>
-                </>
+                homeView
               ) : showHistory ? (
                 <>
                   {/* Previous conversations: newest first, each opens its transcript. */}
@@ -402,19 +479,8 @@ export function WidgetDesignPage() {
                       <span className="hot-wd-widget__title">{headingShown}</span>
                       <span className="hot-wd-widget__subtitle">{agentName === 'hidden' ? tagline : `${headingShown} - ${agentShown}`}</span>
                     </div>
-                    {history && historyDesign === 'menu' ? (
-                      // Design A: the ⋮ menu holds Previous conversations and End chat.
-                      <span className="hot-wd-menu-anchor" ref={chatMenuRef}>
-                        <button type="button" className={`hot-wd-icon-btn${chatMenu ? ' hot-wd-icon-btn--on' : ''}`} aria-label="More options" aria-haspopup="menu" aria-expanded={chatMenu} onClick={() => setChatMenu((o) => !o)}>
-                          <DotsVertical />
-                        </button>
-                        {chatMenu && (
-                          <span className="hot-wd-menu" role="menu">
-                            <button type="button" role="menuitem" onClick={() => { setChatMenu(false); setChatView('history') }}><span className="hot-wd-mask hot-wd-mask--16" style={{ '--mask': 'url(/widget/clock-fast-forward.svg)' } as CSSProperties} />Previous conversations</button>
-                            <button type="button" role="menuitem" onClick={() => setChatMenu(false)}><Icon name="logout" size={16} />End chat</button>
-                          </span>
-                        )}
-                      </span>
+                    {historyMenu ? (
+                      historyMenu
                     ) : (
                       <img src="/widget/logout.svg" width={20} height={20} alt="End chat" />
                     )}
@@ -433,7 +499,7 @@ export function WidgetDesignPage() {
                     <div className="hot-wd-composer">
                       <span className="hot-wd-composer__placeholder">Ask me anything!</span>
                       <div className="hot-wd-composer__tools">
-                        {filePicker ? <img src="/widget/attach.svg" width={16} height={16} alt="Attach a file" /> : <span />}
+                        {filePicker ? <Icon name="attachment" size={16} title="Attach a file" /> : <span />}
                         <span className="hot-wd-composer__send"><img src="/widget/send.svg" width={16} height={16} alt="Send" /></span>
                       </div>
                     </div>
@@ -446,8 +512,38 @@ export function WidgetDesignPage() {
         </div>
       </div>
 
+      {trying && (
+        <div className="hot-wd-try" onPointerDown={(e) => { if (e.target === e.currentTarget) setTrying(false) }}>
+          <div className="hot-wd-try__page" role="dialog" aria-modal="true" aria-label="Try widget" style={widgetStyle}>
+            <button type="button" className="hot-wd-try__close" aria-label="Close" onClick={() => setTrying(false)}><Icon name="close" size={20} /></button>
+            {tryState !== 'closed' && (
+              <div
+                className={`hot-wd-widget hot-wd-try__widget${tryState === 'closing' ? ' hot-wd-try__widget--closing' : ''}`} aria-label="Chat widget"
+                onAnimationEnd={() => { if (tryState === 'closing') setTryState('closed') }}
+              >
+                {homeView}
+              </div>
+            )}
+            {/* Closed, it's the launcher as set up; open, it turns into a close button. The tooltip shows on hover or focus only (R4). */}
+            <button
+              type="button" className={`hot-wd-launcher hot-wd-try__launcher${launcherLabel ? ' hot-wd-launcher--pill' : ''}${tryOpen ? ' hot-wd-try__launcher--open' : ''}${tipQuiet ? ' hot-wd-try__launcher--quiet' : ''}`}
+              aria-label={tryOpen ? 'Close chat' : launcherLabel || 'Open chat'} aria-expanded={tryOpen} onClick={() => { setTryState(tryOpen ? 'closing' : 'open'); setTipQuiet(true) }} onPointerLeave={() => setTipQuiet(false)}
+            >
+              {/* Keyed, so each swap between the bubble and the close icon replays the turn-in animation. */}
+              {tryOpen ? <span key="close" className="hot-wd-launcher__slot hot-wd-try__icon"><Icon name="close" size={20} /></span>
+                : launcherIcon ? <img key="image" className="hot-wd-try__icon" src={launcherIcon.url} alt="" width={48} height={48} />
+                : <span key="bubble" className="hot-wd-launcher__slot hot-wd-try__icon"><Icon name="chatsupport" size={24} /></span>}
+              {/* The label stays mounted and folds away, so the pill's width animates into the circle and back. */}
+              {launcherLabel && <span className="hot-wd-launcher__label hot-wd-try__label" aria-hidden={tryOpen}>{launcherLabel}</span>}
+              {launcherTooltip && !tryOpen && <span className="hot-wd-tooltip" role="tooltip">{launcherTooltip}</span>}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="hot-wd__actions">
-        <Button variant="primary" size="sm" disabled={!dirty} onClick={() => setDirty(false)}>Save</Button>
+        {saveError && <span className="hot-wd__save-error" role="alert">Couldn’t save. The browser’s storage may be full; try smaller images.</span>}
+        <Button variant="primary" size="sm" disabled={!dirty} onClick={save}>Save</Button>
       </div>
     </div>
   )

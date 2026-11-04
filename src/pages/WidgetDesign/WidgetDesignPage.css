@@ -4,6 +4,12 @@
 .hot-wd__form { display: flex; flex: 1; flex-direction: column; gap: 12px; min-width: 0; }
 .hot-wd__title { display: inline-flex; align-items: center; gap: 12px; }
 .hot-wd__layout { font-size: 14px; font-weight: var(--fontWeightRegular); }
+/* "Design options" trigger and its menu: two radio lists in one panel, the second split off by a line. */
+.hot-wd-options { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px 0 12px; border: 1px solid var(--slateBorderDefault); border-radius: 6px; background: var(--slateSurfaceWhite); font: var(--fontWeightMedium) 14px/20px var(--fontFamily); color: var(--slateTextBody); cursor: pointer; }
+.hot-wd-options:hover, .hot-wd-options[aria-expanded="true"] { background: var(--slateSurfaceSubtle); }
+.hot-wd-options__menu { display: flex; flex-direction: column; width: 240px; border-radius: 8px; background: var(--slateSurfaceWhite); box-shadow: inset 0 0 0 0.5px var(--slateBorderMild), 0 4px 12px var(--slateBorderLight); overflow: hidden; }
+.hot-wd-options__menu .hot-dropdown { width: 100%; box-shadow: none; border-radius: 0; }
+.hot-wd-options__menu .hot-dropdown + .hot-dropdown { border-top: 1px solid var(--slateBorderLight); }
 /* Tabs layout: underline tabs across the form, then the selected group's fields with no card around them. */
 .hot-wd__form--tabs { gap: 24px; }
 .hot-wd-panel { display: flex; flex-direction: column; gap: 24px; }
@@ -45,17 +51,16 @@
 .hot-wd-logo__remove { position: absolute; top: -6px; right: -6px; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; padding: 0; border: 1px solid var(--slateBorderLight); border-radius: 9999px; background: var(--slateSurfaceWhite); color: var(--slateTextBody); cursor: pointer; box-shadow: 0 1px 2px color-mix(in srgb, var(--slateTextTitle) 10%, transparent); }
 .hot-wd-logo__remove:hover { background: var(--slateSurfaceSubtle100Hover); color: var(--slateTextTitle); }
 .hot-wd-logo__remove:focus-visible { outline: 2px solid var(--primaryBorderDefault); outline-offset: 1px; }
-.hot-wd-widget__logo { box-sizing: border-box; width: 52px; height: 52px; border: 2px solid transparent; border-radius: 9999px; object-fit: cover; }
-.hot-wd-widget__logo--ring { border-color: var(--widget-color); }
+.hot-wd-widget__logo { flex: none; width: 40px; height: 40px; border-radius: 9999px; object-fit: cover; }
 /* Launcher icon: the logo container, filled with the default launcher until an icon is uploaded */
 .hot-wd-logo--launcher { border-style: solid; border-color: var(--widget-color); background: var(--widget-color); color: var(--slateSurfaceWhite); }
 .hot-wd-logo--launcher:has(img) { padding: 0; border-style: dashed; border-color: var(--slateBorderDefault); background: var(--slateSurfaceWhite); }
 .hot-wd-logo--launcher img { object-fit: cover; } /* fills the circle, same as the launcher */
-.hot-wd-link { display: inline-flex; align-items: center; gap: 6px; font: var(--fontWeightMedium) 14px/20px var(--fontFamily); color: var(--primaryTextLabel); text-decoration: none; }
-.hot-wd-link:hover { text-decoration: underline; }
 
 /* Conversation: Agent identity and Features sub-sections */
 .hot-wd-section { display: flex; flex-direction: column; gap: 8px; }
+.hot-wd-radios { gap: 6px; }
+.hot-wd__actions-bar { display: inline-flex; align-items: center; gap: 8px; }
 .hot-wd-option-eg { font-style: italic; color: var(--slateTextSubtle); }
 .hot-wd-section__title { font: var(--fontWeightMedium) 14px/20px var(--fontFamily); color: var(--slateTextBody); }
 .hot-wd-features { display: flex; flex-direction: column; border: 1px solid var(--slateBorderLight); border-radius: 8px; }
@@ -71,7 +76,7 @@
 .hot-wd-preview { position: sticky; top: 0; display: flex; flex: 1; flex-direction: column; align-self: stretch; align-items: center; gap: 12px; box-sizing: border-box; min-width: 0; padding: 20px 20px 40px; border-radius: 8px; background: var(--slateSurfaceSubtle); } /* stretches to the full height of the page body */
 .hot-wd-preview__tabs { width: 400px; max-width: 100%; }
 .hot-wd-preview__tabs > * { flex: 1; }
-.hot-wd-widget, .hot-wd-site { display: flex; flex-direction: column; box-sizing: border-box; width: 400px; max-width: 100%; height: 582px; overflow: hidden; border-radius: 12px; background: var(--slateSurfaceWhite); box-shadow: 0 0 24px -4px color-mix(in srgb, var(--slateTextTitle) 15%, transparent); }
+.hot-wd-widget, .hot-wd-site { display: flex; flex-direction: column; box-sizing: border-box; width: 400px; max-width: 100%; height: 600px; overflow: hidden; border-radius: 12px; background: var(--slateSurfaceWhite); box-shadow: 0 0 24px -4px color-mix(in srgb, var(--slateTextTitle) 15%, transparent); }
 .hot-wd-widget__header { display: flex; flex: none; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid var(--slateBorderLight); }
 .hot-wd-widget__header > img { flex: none; }
 .hot-wd-widget__titles { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
@@ -97,7 +102,7 @@
 .hot-wd-chat { display: flex; flex: 1; flex-direction: column; gap: 12px; min-height: 0; padding: 20px 20px 0; overflow: hidden; }
 .hot-wd-msg { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding-right: 16px; }
 .hot-wd-msg .hot-wd-bubble + .hot-wd-bubble { margin-top: 4px; }
-.hot-wd-bubble { align-self: stretch; padding: 8px 12px; border-radius: 14px; background: var(--slateSurfaceSubtle100Hover); font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextTitle); }
+.hot-wd-bubble { align-self: stretch; padding: 8px 12px; border-radius: 14px; background: var(--widget-agent-bubble); font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextTitle); }
 .hot-wd-bubble--fit { align-self: flex-start; }
 .hot-wd-msg--visitor { align-items: flex-end; padding: 0 0 0 48px; }
 .hot-wd-bubble--visitor { align-self: flex-end; background: var(--widget-color); color: var(--slateSurfaceWhite); }
@@ -118,19 +123,23 @@
 .hot-wd-site__line--title { width: 60%; height: 18px; margin-bottom: 8px; }
 .hot-wd-site__line--short { width: 40%; }
 .hot-wd-site__launcher { position: absolute; right: 20px; bottom: 20px; display: flex; } /* flex, so the inline launcher has no text-baseline gap under it */
-.hot-wd-launcher { position: relative; display: inline-flex; align-items: center; gap: 8px; box-sizing: border-box; height: 48px; padding: 0; border-radius: 9999px; background: var(--widget-color); color: var(--slateSurfaceWhite); box-shadow: 0 4px 12px color-mix(in srgb, var(--widget-color) 35%, transparent); cursor: pointer; }
+.hot-wd-launcher { position: relative; display: inline-flex; align-items: center; gap: 0; box-sizing: border-box; height: 48px; padding: 0; border-radius: 9999px; background: var(--widget-color); color: var(--slateSurfaceWhite); box-shadow: 0 4px 12px color-mix(in srgb, var(--widget-color) 35%, transparent); cursor: pointer; }
 /* The icon or uploaded image always takes the same 48px slot, so adding or removing an image doesn't resize the launcher. */
 .hot-wd-launcher__slot { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 48px; height: 48px; }
 .hot-wd-launcher img { flex: none; width: 48px; height: 48px; border-radius: 9999px; object-fit: cover; } /* fills the slot edge to edge */
 .hot-wd-launcher--pill { padding-right: 18px; }
+/* The default bubble's 48px slot already has air around the glyph, so its label sits 2px away; an uploaded image keeps 8px. */
+.hot-wd-launcher__slot + .hot-wd-launcher__label { padding-left: 2px; }
 /* With a label, the image sits in the pill with a 2px ring in the widget colour. */
 .hot-wd-launcher--pill img { box-sizing: border-box; border: 2px solid var(--widget-color); }
-.hot-wd-launcher__label { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--fontWeightMedium) 14px/20px var(--fontFamily); }
+.hot-wd-launcher__label { box-sizing: content-box; padding-left: 8px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--fontWeightMedium) 14px/20px var(--fontFamily); }
 /* The tooltip stays visible in the preview so the admin sees it; on the website it shows on hover and focus. */
 /* Figma 23:18932: a slate pill, placed to the left of the launcher. */
 .hot-wd-tooltip { position: absolute; top: 50%; right: calc(100% + 8px); transform: translateY(-50%); width: max-content; max-width: 260px; padding: 8px 12px; border-radius: 100px; background: var(--slateSurfaceDark600); color: var(--slateSurfaceWhite); font: var(--fontWeightRegular) 14px/20px var(--fontFamily); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Widget preview uses Inter, the widget's own font (no token for it yet). */
+/* Agent and AI message bubbles in the visitor's widget. HOT has no token for this grey (#f5f5f5), so it is named once here. */
+:root { --widget-agent-bubble: #f5f5f5; }
 .hot-wd-widget, .hot-wd-site { --fontFamily: 'Inter', sans-serif; font-family: var(--fontFamily); }
 
 /* Previous conversations (Figma 33:25930 menu, 33:25931 bottom nav) */
@@ -154,3 +163,40 @@
 .hot-wd-nav { display: flex; flex: none; padding: 10px 20px; border-top: 1px solid var(--slateBorderLight); }
 .hot-wd-nav button { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 2px; padding: 0; border: 0; background: none; font: var(--fontWeightRegular) 12px/18px var(--fontFamily); color: var(--slateTextSubtle); cursor: pointer; }
 .hot-wd-nav button[aria-current] { font-weight: 600; color: var(--widget-color); }
+
+.hot-wd__save-error { margin-right: 12px; font: var(--fontWeightRegular) 12px/18px var(--fontFamily); color: var(--errorTextBody); }
+
+/* Try Widget: a large modal standing in for the customer's website, with the widget in its bottom-right corner. */
+.hot-wd-try { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 64px; background: color-mix(in srgb, var(--slateTextTitle) 40%, transparent); }
+.hot-wd-try__page { --fontFamily: 'Inter', sans-serif; position: relative; box-sizing: border-box; width: 100%; max-width: 1548px; height: 100%; max-height: 932px; border-radius: 12px; background: var(--slateSurfaceWhite); box-shadow: 0 20px 24px -4px color-mix(in srgb, var(--slateTextTitle) 8%, transparent); font-family: var(--fontFamily); }
+.hot-wd-try__close { position: absolute; top: 20px; right: 20px; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--slateTextBody); cursor: pointer; }
+.hot-wd-try__close:hover { background: var(--slateSurfaceSubtle100Hover); }
+.hot-wd-try__launcher { position: absolute; right: 24px; bottom: 24px; border: 0; }
+.hot-wd-try__launcher:focus-visible { outline: 2px solid var(--widget-color); outline-offset: 3px; }
+.hot-wd-try__widget { position: absolute; right: 24px; bottom: 88px; max-height: calc(100% - 152px); }
+/* Tooltip: appears 50ms into a hover (or on keyboard focus), never on touch screens, and not again after a click until the pointer leaves. */
+.hot-wd-try .hot-wd-tooltip { visibility: hidden; opacity: 0; transition: opacity 120ms ease-out, visibility 0s linear 120ms; }
+@media (hover: hover) { .hot-wd-try__launcher:hover .hot-wd-tooltip { visibility: visible; opacity: 1; transition: opacity 120ms ease-out 50ms, visibility 0s linear 50ms; } }
+.hot-wd-try__launcher:focus-visible .hot-wd-tooltip { visibility: visible; opacity: 1; transition: opacity 120ms ease-out 50ms, visibility 0s linear 50ms; }
+.hot-wd-try .hot-wd-try__launcher--quiet .hot-wd-tooltip { visibility: hidden; opacity: 0; transition: none; }
+/* Modal entrance: the scrim fades in while the panel scales up from 95% on an ease-out curve. */
+.hot-wd-try { animation: hot-wd-try-fade 200ms ease-out both; }
+.hot-wd-try__page { animation: hot-wd-try-rise 200ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes hot-wd-try-fade { from { opacity: 0; } }
+@keyframes hot-wd-try-rise { from { opacity: 0; transform: scale(0.95); } }
+@media (prefers-reduced-motion: reduce) { .hot-wd-try, .hot-wd-try__page { animation-duration: 1ms; } }
+/* Collapsed → expanded: the widget grows out of the launcher's corner, and the bubble turns into the close icon. */
+.hot-wd-try__widget { transform-origin: bottom right; animation: hot-wd-try-expand 200ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.hot-wd-try__icon { animation: hot-wd-try-icon 200ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes hot-wd-try-expand { from { opacity: 0; transform: scale(0.95); } }
+@keyframes hot-wd-try-icon { from { opacity: 0; transform: rotate(-90deg) scale(0.6); } }
+@media (prefers-reduced-motion: reduce) { .hot-wd-try__widget, .hot-wd-try__icon { animation-duration: 1ms; } }
+/* Expanded → closed: the widget shrinks back into the launcher's corner. */
+.hot-wd-try__widget--closing { animation: hot-wd-try-collapse 160ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes hot-wd-try-collapse { to { opacity: 0; transform: scale(0.95); } }
+/* The pill folds into a circle when the widget opens: the label's width, its 8px gap and the right padding all ease to 0. */
+.hot-wd-try__launcher { gap: 0; transition: padding-right 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+.hot-wd-try__label { box-sizing: content-box; padding-left: 8px; transition: max-width 200ms cubic-bezier(0.16, 1, 0.3, 1), padding-left 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 120ms ease-out; }
+.hot-wd-try__launcher--open { padding-right: 0; }
+.hot-wd-try__launcher--open .hot-wd-try__label { max-width: 0; padding-left: 0; opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .hot-wd-try__widget--closing { animation-duration: 1ms; } .hot-wd-try__launcher, .hot-wd-try__label { transition: none; } }

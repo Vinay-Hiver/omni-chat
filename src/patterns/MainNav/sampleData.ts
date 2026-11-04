@@ -17,4 +17,4 @@ export const navSampleIds = navSampleItems.map((i) => i.id)
 
 
 /** The account menu's example person, shared by the Main nav and Page layout stories. */
-export const navSampleUserMenu = { name: 'Praveen Borawar', email: 'praveen.b@hiverhq.co.in', availability: 'Available on Chat, Email and Voice' }
+export const navSampleUserMenu = { name: 'John Cole', email: 'praveen.b@hiverhq.co.in', availability: 'Available on Chat, Email and Voice' }
