@@ -39,7 +39,7 @@ const PAST_CHATS = [{ id: 1, date: '12 Oct' }, { id: 2, date: '12 Oct' }, { id: 
 const PREVIEW_FOR: Record<GroupId, Preview> = { appearance: 'home', launcher: 'launcher', conversation: 'chat' }
 
 /** Untitled UI "dots-vertical" (HOT has no such icon). Strokes in currentColor, so it takes the button's text colour. */
-function DotsVertical() {
+export function DotsVertical() {
   const dot = (y: number) => <path d={`M12 ${y + 1}a1 1 0 1 0 0-2a1 1 0 0 0 0 2Z`} />
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

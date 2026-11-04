@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, FormEvent, KeyboardEvent, ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
+import { Tag } from '../../components/Tag'
+import { DotsVertical } from '../WidgetDesign/WidgetDesignPage'
 import { loadSettings } from '../WidgetDesign/widgetSettings'
-import { ME, addLiveMessage, createLiveChat, readLiveChats, subscribeLiveChats, updateLiveChat } from '../Conversations/liveChats'
-import type { LiveMessage } from '../Conversations/liveChats'
+import { ME, addLiveMessage, createLiveChat, readLiveChats, subscribeLiveChats, updateLiveChat, useLiveChats } from '../Conversations/liveChats'
+import type { LiveChat, LiveMessage } from '../Conversations/liveChats'
 import '../WidgetDesign/WidgetDesignPage.css'
 import './ChatInteractionPage.css'
 
@@ -36,6 +38,9 @@ type Banner = null | 'offline' | 'unavailable' | 'online'
 type Rating = 'good' | 'okay' | 'bad'
 
 const fmtTime = (t: number) => new Date(t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+const fmtDate = (t: number) => new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+const isClosed = (c: LiveChat) => c.messages.some((m) => m.from === 'event' && m.text === 'Conversation Closed')
+const masks = { chat: { '--mask': 'url(/widget/message-dots-circle.svg)' } as CSSProperties, history: { '--mask': 'url(/widget/clock-fast-forward.svg)' } as CSSProperties }
 
 /** Untitled UI icons for the connection banners (HOT has none of these). */
 function BannerIcon({ kind }: { kind: Exclude<Banner, null> }) {
@@ -65,6 +70,10 @@ export function ChatInteractionPage() {
   const [human, setHuman] = useState(false)
   const [, setTick] = useState(0)
   const [banner, setBanner] = useState<Banner>(null)
+  // Previous conversations (when switched on in Widget Design): the list, or one past chat's transcript by id.
+  const [panel, setPanel] = useState<'chat' | 'history' | string>('chat')
+  const [menuOpen, setMenuOpen] = useState(false)
+  const allChats = useLiveChats()
   // After a click the tooltip stays hidden until the pointer leaves and comes back.
   const [tipQuiet, setTipQuiet] = useState(false)
   // CSAT (states 20–23)
@@ -237,7 +246,40 @@ export function ChatInteractionPage() {
   const style = { '--widget-color': s.color } as CSSProperties
   const logo = s.logo?.url ?? DEFAULT_LOGO
   const headerAvatar = human && s.agentName !== 'hidden' ? HUMAN.avatar : logo
-  const subtitle = `${s.heading} - ${human ? humanName : 'AI Agent'}`
+  // As in the Widget Design preview: with the name hidden, the tagline stands in for "heading - agent".
+  const subtitle = human && s.agentName === 'hidden' ? s.tagline : `${s.heading} - ${human ? humanName : 'AI Agent'}`
+
+  // This browser's other chats with the inbox, newest first (anonymous history is browser-specific).
+  const past = allChats.filter((c) => c.id !== chatId.current)
+  const transcript_ = past.find((c) => c.id === panel)
+  const showMenu = s.history && s.historyDesign === 'menu'
+  const showNav = s.history && s.historyDesign === 'nav'
+  const openHistory = () => { setMenuOpen(false); setPanel('history') }
+  const newConversation = () => { setPanel('chat'); if (visitor) startChat(); else setStage('home') }
+
+  // Design A: the ⋮ menu holds Previous conversations (and End chat during a chat).
+  const historyMenu = showMenu && (
+    <span className="hot-wd-menu-anchor">
+      <button type="button" className={`hot-wd-icon-btn${menuOpen ? ' hot-wd-icon-btn--on' : ''}`} aria-label="More options" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((o) => !o)}>
+        <DotsVertical />
+      </button>
+      {menuOpen && (
+        <span className="hot-wd-menu" role="menu">
+          <button type="button" role="menuitem" onClick={openHistory}><span className="hot-wd-mask hot-wd-mask--16" style={masks.history} />Previous conversations</button>
+          {stage === 'chat' && <button type="button" role="menuitem" onClick={() => { setMenuOpen(false); closeConversation() }}><Icon name="logout" size={16} />End chat</button>}
+        </span>
+      )}
+    </span>
+  )
+  // Design B: a Chat / History bar along the bottom.
+  const historyNav = showNav && (
+    <nav className="hot-wd-nav" aria-label="Widget">
+      <button type="button" aria-current={panel === 'chat' || undefined} onClick={() => setPanel('chat')}><span className="hot-wd-mask" style={masks.chat} />Chat</button>
+      <button type="button" aria-current={panel !== 'chat' || undefined} onClick={() => setPanel('history')}><span className="hot-wd-mask" style={masks.history} />History</button>
+    </nav>
+  )
+  const backButton = showMenu && <button type="button" className="hot-wd-icon-btn" aria-label="Back" onClick={() => setPanel(panel === 'history' ? 'chat' : 'history')}><Icon name="arrowback" size={16} style={{ width: 20, height: 20 }} /></button>
+
 
   const msgGroups: ReactNode[] = []
   items.forEach((it, i) => {
@@ -281,11 +323,50 @@ export function ChatInteractionPage() {
 
       {open && (
         <section className={`hot-ci-widget${closing ? ' hot-ci-widget--closing' : ''}`} aria-label="Chat" onAnimationEnd={() => { if (closing) { setOpen(false); setClosing(false) } }}>
-          {stage === 'home' ? (
+          {panel === 'history' ? (
+            <>
+              <header className="hot-ci-header">
+                {backButton}
+                <span className="hot-ci-header__titles"><strong>Previous conversations</strong><span>Your older conversations</span></span>
+              </header>
+              {past.length ? (
+                <ul className="hot-wd-past">
+                  {past.map((c) => (
+                    <li key={c.id} className="hot-wd-past__row" role="button" tabIndex={0} onClick={() => setPanel(c.id)} onKeyDown={(e) => { if (e.key === 'Enter') setPanel(c.id) }}>
+                      <span className="hot-wd-past__text">
+                        <span className="hot-wd-past__title">Your conversation</span>
+                        <span className="hot-wd-past__meta">{fmtDate(c.updatedAt)}{isClosed(c) ? <Tag color="lightBlue">Resolved</Tag> : <Tag color="green">Open</Tag>}</span>
+                      </span>
+                      <Icon name="chevronright" size={16} />
+                    </li>
+                  ))}
+                </ul>
+              ) : <div className="hot-ci-past-empty">No previous conversations yet.</div>}
+              <div className="hot-ci-footer"><button type="button" className="hot-ci-primary" onClick={newConversation}>Start new conversation</button></div>
+            </>
+          ) : transcript_ ? (
+            <>
+              <header className="hot-ci-header">
+                {backButton}
+                <span className="hot-ci-header__titles"><strong>Your conversation</strong><span>{fmtDate(transcript_.updatedAt)}</span></span>
+              </header>
+              <div className="hot-ci-thread">
+                {transcript_.messages.map((m, i) => m.from === 'event'
+                  ? <div key={i} className="hot-ci-divider">{m.text}</div>
+                  : (
+                    <div key={i} className={`hot-ci-msg hot-ci-msg--${m.from === 'visitor' ? 'out' : 'in'} hot-ci-msg--first`}>
+                      <div className="hot-ci-bubble"><span className="hot-ci-bubble__text">{m.text}</span></div>
+                      <span className="hot-ci-meta">{m.from !== 'visitor' && <>{m.from === 'ai' ? 'AI Agent' : humanName}<i /></>}{fmtTime(m.at)}</span>
+                    </div>
+                  ))}
+              </div>
+            </>
+          ) : stage === 'home' ? (
             <>
               <header className="hot-ci-header">
                 <img className="hot-ci-header__logo" src={logo} width={40} height={40} alt="" />
                 <span className="hot-ci-header__titles"><strong>{s.heading}</strong><span>{s.tagline}</span></span>
+                {historyMenu}
               </header>
               <form className={`hot-ci-home${formShown ? ' hot-ci-home--form' : ''}`} onSubmit={submitForm} noValidate>
                 <div className="hot-ci-home__body">
@@ -318,8 +399,8 @@ export function ChatInteractionPage() {
                   <img src={headerAvatar} width={40} height={40} alt="" />
                   <img className="hot-ci-header__online" src="/widget/online.svg" width={13} height={13} alt="" />
                 </span>
-                <span className="hot-ci-header__titles"><strong>Support Chat</strong><span>{subtitle}</span></span>
-                {stage === 'chat' && <button type="button" className="hot-ci-icon-btn" aria-label="End chat" title="End chat" onClick={closeConversation}><img src="/widget/logout.svg" width={20} height={20} alt="" /></button>}
+                <span className="hot-ci-header__titles"><strong>{s.heading}</strong><span>{subtitle}</span></span>
+                {historyMenu || stage === 'chat' && <button type="button" className="hot-ci-icon-btn" aria-label="End chat" title="End chat" onClick={closeConversation}><img src="/widget/logout.svg" width={20} height={20} alt="" /></button>}
               </header>
 
               <div className="hot-ci-thread" ref={scrollRef} aria-live="polite">
@@ -359,6 +440,8 @@ export function ChatInteractionPage() {
               ) : null}
             </>
           )}
+
+          {historyNav}
 
           {banner && (
             <div className={`hot-ci-banner hot-ci-banner--${banner}`} role="status">

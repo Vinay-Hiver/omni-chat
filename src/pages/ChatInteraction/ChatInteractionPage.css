@@ -57,6 +57,7 @@
 @keyframes hot-ci-rise { from { opacity: 0; transform: translateY(12px); } }
 
 .hot-ci-footer { flex: none; padding: 20px; }
+.hot-ci-past-empty { display: flex; flex: 1; align-items: center; justify-content: center; padding: 20px; font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }
 .hot-ci-primary { width: 100%; height: 36px; border: 0; border-radius: 6px; background: var(--widget-color); font: var(--fontWeightMedium) 14px/20px var(--fontFamily); color: var(--slateSurfaceWhite); cursor: pointer; }
 .hot-ci-primary:disabled { background: var(--slateSurfaceSubtle100Hover); color: var(--slateTextSubtle); cursor: default; }
 
