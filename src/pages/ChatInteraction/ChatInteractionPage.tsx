@@ -374,7 +374,7 @@ export function ChatInteractionPage() {
         type="button" className={`hot-wd-launcher hot-ci-launcher${s.launcherLabel ? ' hot-wd-launcher--pill' : ''}${tipQuiet ? ' hot-ci-launcher--quiet' : ''}${open && !closing ? ' hot-ci-launcher--open' : ''}`}
         aria-label={open && !closing ? 'Close chat' : s.launcherLabel || 'Open chat'} aria-expanded={open && !closing} onClick={toggle} onPointerLeave={() => setTipQuiet(false)}
       >
-        {open && !closing ? <span key="close" className="hot-wd-launcher__slot hot-ci-launcher__icon"><Icon name="close" size={20} /></span>
+        {open && !closing ? <span key="close" className="hot-wd-launcher__slot hot-ci-launcher__icon"><Icon name="close" size={16} style={{ width: 20, height: 20 }} /></span>
           : s.launcherIcon ? <img key="image" className="hot-ci-launcher__icon" src={s.launcherIcon.url} alt="" width={48} height={48} />
           : <span key="bubble" className="hot-wd-launcher__slot hot-ci-launcher__icon"><Icon name="chatsupport" size={24} /></span>}
         {s.launcherLabel && <span className="hot-wd-launcher__label hot-ci-launcher__label" aria-hidden={open && !closing}>{s.launcherLabel}</span>}

@@ -446,7 +446,7 @@ export function WidgetDesignPage() {
                   {/* Previous conversations: newest first, each opens its transcript. */}
                   <div className="hot-wd-widget__header">
                     {/* The bottom nav already leads back to Chat, so only the menu design needs a back arrow. */}
-                    {historyDesign === 'menu' && <button type="button" className="hot-wd-icon-btn" aria-label="Back to chat" onClick={() => setChatView('chat')}><Icon name="arrowback" size={20} /></button>}
+                    {historyDesign === 'menu' && <button type="button" className="hot-wd-icon-btn" aria-label="Back to chat" onClick={() => setChatView('chat')}><Icon name="arrowback" size={16} style={{ width: 20, height: 20 }} /></button>}
                     <div className="hot-wd-widget__titles">
                       <span className="hot-wd-widget__title">Previous conversations</span>
                       <span className="hot-wd-widget__subtitle">Your older conversations</span>
@@ -515,7 +515,7 @@ export function WidgetDesignPage() {
       {trying && (
         <div className="hot-wd-try" onPointerDown={(e) => { if (e.target === e.currentTarget) setTrying(false) }}>
           <div className="hot-wd-try__page" role="dialog" aria-modal="true" aria-label="Try widget" style={widgetStyle}>
-            <button type="button" className="hot-wd-try__close" aria-label="Close" onClick={() => setTrying(false)}><Icon name="close" size={20} /></button>
+            <button type="button" className="hot-wd-try__close" aria-label="Close" onClick={() => setTrying(false)}><Icon name="close" size={16} style={{ width: 20, height: 20 }} /></button>
             {tryState !== 'closed' && (
               <div
                 className={`hot-wd-widget hot-wd-try__widget${tryState === 'closing' ? ' hot-wd-try__widget--closing' : ''}`} aria-label="Chat widget"
@@ -530,7 +530,7 @@ export function WidgetDesignPage() {
               aria-label={tryOpen ? 'Close chat' : launcherLabel || 'Open chat'} aria-expanded={tryOpen} onClick={() => { setTryState(tryOpen ? 'closing' : 'open'); setTipQuiet(true) }} onPointerLeave={() => setTipQuiet(false)}
             >
               {/* Keyed, so each swap between the bubble and the close icon replays the turn-in animation. */}
-              {tryOpen ? <span key="close" className="hot-wd-launcher__slot hot-wd-try__icon"><Icon name="close" size={20} /></span>
+              {tryOpen ? <span key="close" className="hot-wd-launcher__slot hot-wd-try__icon"><Icon name="close" size={16} style={{ width: 20, height: 20 }} /></span>
                 : launcherIcon ? <img key="image" className="hot-wd-try__icon" src={launcherIcon.url} alt="" width={48} height={48} />
                 : <span key="bubble" className="hot-wd-launcher__slot hot-wd-try__icon"><Icon name="chatsupport" size={24} /></span>}
               {/* The label stays mounted and folds away, so the pill's width animates into the circle and back. */}
