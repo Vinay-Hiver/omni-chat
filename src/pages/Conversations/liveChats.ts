@@ -18,6 +18,8 @@ export type LiveChat = {
   /** Assigned to Bot while the AI agent handles it; Mine once it is handed to a person. */
   view: 'bot' | 'mine'
   assignee: 'none' | typeof ME.value
+  /** Set once either side ends the chat; it stays in its view. */
+  closed?: { by: 'agent' | 'visitor'; at: number }
   messages: LiveMessage[]
   updatedAt: number
 }

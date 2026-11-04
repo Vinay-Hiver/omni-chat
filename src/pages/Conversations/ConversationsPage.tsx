@@ -10,7 +10,7 @@ import { PageLayout } from '../../patterns/PageLayout'
 import { ChannelRightPanel } from '../../patterns/RightPanel/ChannelRightPanel'
 import { ChatPanel } from './ChatPanel'
 import { CHAT_INBOX, chatConversations } from './data'
-import type { ChatConversation } from './data'
+import type { ChatConversation, ChatMessage } from './data'
 import { ME, updateLiveChat, useLiveChats } from './liveChats'
 import type { LiveChat } from './liveChats'
 import './ConversationsPage.css'
@@ -21,12 +21,14 @@ const time = (t: number) => new Date(t).toLocaleString('en-US', { month: 'short'
 
 /** A chat from /chat-interaction, in the shape the list and thread use. */
 const fromLive = (c: LiveChat): ChatConversation => ({
-  id: c.id, view: c.view, title: c.name, avatarColor: 'violet', live: true, assignee: c.assignee,
+  id: c.id, view: c.view, title: c.name, avatarColor: 'violet', live: true, assignee: c.assignee, closed: !!c.closed,
   date: new Date(c.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
   preview: [...c.messages].reverse().find((m) => m.from !== 'event')?.text ?? '',
-  messages: c.messages.map((m) => m.from === 'event' ? { kind: 'event', text: m.text, time: time(m.at) }
+  messages: c.messages.map((m): ChatMessage => m.from === 'event' ? { kind: 'event', text: m.text, time: time(m.at) }
     : m.from === 'visitor' ? { kind: 'incoming', text: m.text, time: time(m.at) }
-    : { kind: 'agent-text', text: m.text, time: time(m.at), sender: m.from === 'ai' ? 'AI Agent' : ME.name }),
+    : { kind: 'agent-text', text: m.text, time: time(m.at), sender: m.from === 'ai' ? 'AI Agent' : ME.name })
+    // Closed from here: one line for the agent; the visitor's own "Conversation Closed" is already in the thread.
+    .concat(c.closed?.by === 'agent' ? [{ kind: 'event' as const, text: 'Conversation closed by you', time: time(c.closed.at) }] : []),
 })
 
 /** The sidebar: My Work and Personal, one shared inbox (Chat-Support) with the chat views, then More. */
@@ -81,6 +83,11 @@ export function ConversationsPage({ onNavigate }: ConversationsPageProps) {
     setSelected(all.find((c) => c.view === v)?.id)
   }
   // Assigning a live chat to John Cole moves it to Mine; back to None returns it to the bot.
+  // Closing a live chat adds "Conversation closed by you" here and ends it in the visitor's tab, which then shows CSAT.
+  const setLiveStatus = (status: 'open' | 'pending' | 'closed') => {
+    if (!conversation?.live) return
+    updateLiveChat(conversation.id, (c) => ({ closed: status === 'closed' ? c.closed ?? { by: 'agent', at: Date.now() } : undefined }))
+  }
   const assignLive = (value: string) => {
     if (conversation?.live) updateLiveChat(conversation.id, () => ({ assignee: value === ME.value ? ME.value : 'none', view: value === ME.value ? 'mine' : 'bot' }))
   }
@@ -93,6 +100,7 @@ export function ConversationsPage({ onNavigate }: ConversationsPageProps) {
       rightPanel={conversation ? (
         <ChannelRightPanel channel="chat" inboxName={CHAT_INBOX.name} unassigned={conversation.view !== 'mine'} conversationId={conversation.id}
           assignee={conversation.live ? conversation.assignee : undefined} onAssigneeChange={conversation.live ? assignLive : undefined}
+          status={conversation.live ? (conversation.closed ? 'closed' : 'open') : undefined} onStatusChange={conversation.live ? setLiveStatus : undefined}
         />
       ) : undefined}
     >

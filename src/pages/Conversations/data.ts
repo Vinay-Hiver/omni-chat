@@ -20,6 +20,8 @@ export type ChatConversation = {
   live?: boolean
   /** Live chats only: who it is assigned to (`none` while the bot has it). */
   assignee?: string
+  /** Live chats only: ended by either side. */
+  closed?: boolean
 }
 
 /** No sample conversations: every view starts empty, and chats from /chat-interaction fill them (see liveChats.ts). */

@@ -126,6 +126,8 @@ export function ChatInteractionPage() {
   useEffect(() => subscribeLiveChats(() => {
     const chat = readLiveChats().find((c) => c.id === chatId.current)
     if (!chat) return
+    // The agent closed it in Hiver: end the chat here too, which brings up CSAT.
+    if (chat.closed && step.current !== 'done') { closeConversation(); return }
     const fromAgent = chat.messages.filter((m) => m.from === 'agent')
     const fresh = fromAgent.slice(agentSeen.current)
     if (!fresh.length) return
@@ -159,6 +161,8 @@ export function ChatInteractionPage() {
     stopTimers()
     setTyping(false)
     step.current = 'done'
+    // Ended here, Hiver marks it closed too (an agent's close is already recorded).
+    if (chatId.current) updateLiveChat(chatId.current, (c) => ({ closed: c.closed ?? { by: 'visitor', at: Date.now() } }))
     later(600, () => { push({ text: 'Conversation Closed' }); setStage(s.csat ? 'closed' : 'thanks') })
   }
 
