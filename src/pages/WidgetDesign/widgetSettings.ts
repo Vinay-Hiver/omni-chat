@@ -10,8 +10,12 @@ export type WidgetSettings = {
   hsv: Hsv | null
   heading: string
   tagline: string
+  /** The large line on the home screen. Empty means the default. */
+  greeting: string
   welcome: string
   logo: UploadedImage | null
+  /** The launcher shows the widget logo (on by default); off, it shows `launcherIcon` or the default chat bubble. */
+  launcherUseLogo: boolean
   launcherIcon: UploadedImage | null
   launcherLabel: string
   launcherTooltip: string
@@ -22,6 +26,7 @@ export type WidgetSettings = {
   historyDesign: 'menu' | 'nav'
 }
 
+export const DEFAULT_GREETING = 'Hi there!'
 export const DEFAULT_WELCOME = 'We are here to help you'
 
 export const DEFAULT_SETTINGS: WidgetSettings = {
@@ -29,8 +34,10 @@ export const DEFAULT_SETTINGS: WidgetSettings = {
   hsv: null,
   heading: 'Support Team',
   tagline: 'Ask us anything',
+  greeting: '',
   welcome: DEFAULT_WELCOME,
   logo: null,
+  launcherUseLogo: true,
   launcherIcon: null,
   launcherLabel: '',
   launcherTooltip: '',
@@ -57,6 +64,8 @@ export function loadSettings(): WidgetSettings {
     if (!saved.version || saved.version < 3) Object.assign(saved, { launcherIcon: null, launcherLabel: '', launcherTooltip: '' })
     // Version 4: no widget logo by default.
     if (!saved.version || saved.version < 4) saved.logo = null
+    // Saved before the launcher could reuse the widget logo: keep an uploaded launcher image.
+    if (saved.launcherUseLogo === undefined) saved.launcherUseLogo = !saved.launcherIcon
     return { ...DEFAULT_SETTINGS, ...saved }
   } catch {
     return DEFAULT_SETTINGS
@@ -80,4 +89,9 @@ export function readAsDataUrl(file: File): Promise<string> {
     reader.onerror = () => reject(reader.error)
     reader.readAsDataURL(file)
   })
+}
+
+/** The image the launcher shows, or null for the default chat bubble. */
+export function launcherImage(s: Pick<WidgetSettings, 'launcherUseLogo' | 'launcherIcon' | 'logo'>): UploadedImage | null {
+  return s.launcherUseLogo ? s.logo : s.launcherIcon
 }

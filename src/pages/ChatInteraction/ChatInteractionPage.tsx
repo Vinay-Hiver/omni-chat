@@ -3,7 +3,7 @@ import type { CSSProperties, FormEvent, KeyboardEvent, ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
 import { Tag } from '../../components/Tag'
 import { DotsVertical } from '../WidgetDesign/WidgetDesignPage'
-import { loadSettings } from '../WidgetDesign/widgetSettings'
+import { launcherImage, loadSettings } from '../WidgetDesign/widgetSettings'
 import { ME, addLiveMessage, createLiveChat, readLiveChats, subscribeLiveChats, updateLiveChat, useLiveChats } from '../Conversations/liveChats'
 import type { LiveChat, LiveMessage } from '../Conversations/liveChats'
 import '../WidgetDesign/WidgetDesignPage.css'
@@ -18,7 +18,6 @@ import './ChatInteractionPage.css'
  * John Cole, and his replies from Conversations arrive here.
  */
 
-const AVATARS = ['/widget/avatar-1.jpg', '/widget/avatar-2.png', '/widget/avatar-3.png', '/widget/avatar-4.jpg']
 const DEFAULT_LOGO = '/widget/logo-placeholder.svg'
 const HUMAN = { name: ME.name, avatar: '/widget/avatar-3.png' }
 /** The visitor asks for a person in their own words. */
@@ -371,8 +370,7 @@ export function ChatInteractionPage() {
               <form className={`hot-ci-home${formShown ? ' hot-ci-home--form' : ''}`} onSubmit={submitForm} noValidate>
                 <div className="hot-ci-home__body">
                   <div className="hot-ci-home__hero">
-                    <span className="hot-ci-avatars">{AVATARS.map((a) => <img key={a} src={a} width={32} height={32} alt="" />)}</span>
-                    <strong>Hi there!</strong>
+                    <strong>{s.greeting.trim() || 'Hi there!'}</strong>
                     <span>{s.welcome.trim() || 'We are here to help you'}</span>
                   </div>
                   {formShown && (
@@ -458,7 +456,7 @@ export function ChatInteractionPage() {
         aria-label={open && !closing ? 'Close chat' : s.launcherLabel || 'Open chat'} aria-expanded={open && !closing} onClick={toggle} onPointerLeave={() => setTipQuiet(false)}
       >
         {open && !closing ? <span key="close" className="hot-wd-launcher__slot hot-ci-launcher__icon"><Icon name="close" size={16} style={{ width: 20, height: 20 }} /></span>
-          : s.launcherIcon ? <img key="image" className="hot-ci-launcher__icon" src={s.launcherIcon.url} alt="" width={48} height={48} />
+          : launcherImage(s) ? <img key="image" className="hot-ci-launcher__icon" src={launcherImage(s)!.url} alt="" width={48} height={48} />
           : <span key="bubble" className="hot-wd-launcher__slot hot-ci-launcher__icon"><Icon name="chatsupport" size={24} /></span>}
         {s.launcherLabel && <span className="hot-wd-launcher__label hot-ci-launcher__label" aria-hidden={open && !closing}>{s.launcherLabel}</span>}
         {s.launcherTooltip && !(open && !closing) && <span className="hot-wd-tooltip hot-ci-tooltip" role="tooltip">{s.launcherTooltip}</span>}

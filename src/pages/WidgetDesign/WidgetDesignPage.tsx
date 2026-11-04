@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, CSSProperties, ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
 import { Button } from '../../components/Button'
+import { Checkbox } from '../../components/Checkbox'
 import { Dropdown } from '../../components/Dropdown'
 import { Input } from '../../components/Input'
 import { Popover } from '../../components/Popover'
@@ -9,9 +10,10 @@ import { Radio, RadioGroup } from '../../components/Radio'
 import { Switch } from '../../components/Switch'
 import { Tabs } from '../../components/Tabs'
 import { Tag } from '../../components/Tag'
+import { Tooltip } from '../../components/Tooltip'
 import { Textarea } from '../../components/Textarea'
 import { ColorPicker, cssToHsv, hsvToHex } from './ColorPicker'
-import { DEFAULT_WELCOME, loadSettings, readAsDataUrl, saveSettings } from './widgetSettings'
+import { DEFAULT_GREETING, DEFAULT_WELCOME, launcherImage, loadSettings, readAsDataUrl, saveSettings } from './widgetSettings'
 import type { WidgetSettings } from './widgetSettings'
 import type { Hsv } from './ColorPicker'
 import { PageBar } from '../SharedInboxes/SharedInboxesPage'
@@ -19,8 +21,7 @@ import './WidgetDesignPage.css'
 
 const SAMPLE_AGENT = 'John Cole'
 const VERIFICATION_SECRET = 'hv_live_7f3a9c21e84b4d0f9a6e52c1b8d3f047'
-const MAX_LAUNCHER_BYTES = 1024 * 1024
-const MAX_LOGO_PX = 250
+const MAX_IMAGE_BYTES = 1024 * 1024
 const DEFAULT_LOGO = '/widget/logo-placeholder.svg' // Figma 28:19568, shown until a logo is uploaded
 const AVATARS = ['/widget/avatar-1.jpg', '/widget/avatar-2.png', '/widget/avatar-3.png', '/widget/avatar-4.jpg']
 
@@ -97,10 +98,12 @@ export function WidgetDesignPage() {
   const [optionsMenu, setOptionsMenu] = useState(false)
   const [heading, setHeading] = useState(saved.heading)
   const [tagline, setTagline] = useState(saved.tagline)
+  const [greeting, setGreeting] = useState(saved.greeting)
   const [welcome, setWelcome] = useState(saved.welcome)
   const [logo, setLogo] = useState(saved.logo)
   const [logoError, setLogoError] = useState<string | null>(null)
   // Launcher (R2–R4)
+  const [launcherUseLogo, setLauncherUseLogo] = useState(saved.launcherUseLogo)
   const [launcherIcon, setLauncherIcon] = useState(saved.launcherIcon)
   const [launcherError, setLauncherError] = useState<string | null>(null)
   const [launcherLabel, setLauncherLabel] = useState(saved.launcherLabel)
@@ -142,31 +145,31 @@ export function WidgetDesignPage() {
     if (!file) return
     // Errors show inline and the previous icon is kept (R2).
     if (!['image/png', 'image/jpeg'].includes(file.type)) { setLauncherError('Use a PNG or JPG image. SVG and GIF aren’t supported.'); return }
-    if (file.size > MAX_LAUNCHER_BYTES) { setLauncherError('This image is over 1 MB. Try a smaller one.'); return }
+    if (file.size > MAX_IMAGE_BYTES) { setLauncherError('This image is over 1 MB. Try a smaller one.'); return }
     // Kept as a data URL, so the saved icon also shows after a reload.
     readAsDataUrl(file).then((url) => {
       setLauncherError(null)
       setLauncherIcon({ url, name: file.name })
+      setLauncherUseLogo(false)
       setDirty(true)
       setPreview('launcher')
     }, () => setLauncherError('This image couldn’t be read. Try another file.'))
   }
 
-  // The widget logo: PNG or JPG, at most 250 × 250 px. A refused image keeps the current logo. "Change logo" replaces it.
+  // The widget logo: PNG or JPG, at most 1 MB. A refused image keeps the current logo. "Change logo" replaces it.
   const onLogoFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     e.target.value = ''
     if (!file) return
     if (!['image/png', 'image/jpeg'].includes(file.type)) { setLogoError('Use a PNG or JPG image.'); return }
+    if (file.size > MAX_IMAGE_BYTES) { setLogoError('This image is over 1 MB. Try a smaller one.'); return }
     readAsDataUrl(file).then((url) => {
     const img = new Image()
     img.onload = () => {
-      if (img.naturalWidth > MAX_LOGO_PX || img.naturalHeight > MAX_LOGO_PX) {
-        setLogoError(`Choose an image less than ${MAX_LOGO_PX} × ${MAX_LOGO_PX} pixels.`)
-        return
-      }
       setLogoError(null)
       setLogo({ url, name: file.name })
+      // A new logo switches the launcher to it too; the admin can untick that below the launcher icon.
+      edit(setLauncherUseLogo)(true)
       setDirty(true)
       setPreview('home')
     }
@@ -192,7 +195,7 @@ export function WidgetDesignPage() {
 
   const save = () => {
     const settings: WidgetSettings = {
-      color, hsv: hsvPicked ? hsv : null, heading, tagline, welcome, logo, launcherIcon, launcherLabel, launcherTooltip,
+      color, hsv: hsvPicked ? hsv : null, heading, tagline, greeting, welcome, logo, launcherUseLogo, launcherIcon, launcherLabel, launcherTooltip,
       agentName, filePicker, csat, history, historyDesign,
     }
     const ok = saveSettings(settings)
@@ -208,6 +211,15 @@ export function WidgetDesignPage() {
 
   // Clearing the welcome message restores the default (R6). Hidden agent names show the widget heading instead (R5).
   const headingShown = heading.trim() || 'Chat with us'
+  const greetingShown = greeting.trim() || DEFAULT_GREETING
+  const launcherShown = launcherImage({ launcherUseLogo, launcherIcon, logo })
+  const launcherUsesLogo = launcherUseLogo && !!logo
+  // ✕ on the launcher icon: with the widget logo in use, untick the box (ticking it brings the logo back); otherwise drop the uploaded icon.
+  const removeLauncherIcon = () => {
+    if (launcherUsesLogo) edit(setLauncherUseLogo)(false)
+    else { setLauncherIcon(null); setLauncherError(null); setDirty(true) }
+    setPreview('launcher')
+  }
   const welcomeShown = welcome.trim() || DEFAULT_WELCOME
   const agentShown = agentName === 'full' ? SAMPLE_AGENT : agentName === 'first' ? SAMPLE_AGENT.split(' ')[0] : headingShown
   const widgetStyle = { '--widget-color': color } as CSSProperties
@@ -251,9 +263,8 @@ export function WidgetDesignPage() {
         </div>
         <div className="hot-wd-home">
           <div className="hot-wd-home__hero">
-            <div className="hot-wd-avatars">{AVATARS.map((src) => <img key={src} src={src} width={32} height={32} alt="" />)}</div>
             <div className="hot-wd-home__text">
-              <p className="hot-wd-home__greeting">Hi there!</p>
+              <p className="hot-wd-home__greeting">{greetingShown}</p>
               <p className="hot-wd-home__welcome">{welcomeShown}</p>
             </div>
           </div>
@@ -287,7 +298,7 @@ export function WidgetDesignPage() {
                 />
                 <Dropdown
                   variant="radio" title="Previous chat" value={historyDesign}
-                  onChange={(v) => { edit(setHistoryDesign)(v as HistoryDesign); setChatView('chat'); setChatMenu(false); setPreview('chat') }}
+                  onChange={(v) => { edit(setHistoryDesign)(v as HistoryDesign); setChatView('chat'); setChatMenu(false) }}
                   options={[{ value: 'nav', label: 'Bottom nav' }, { value: 'menu', label: 'Overflow menu' }]}
                 />
               </div>
@@ -321,7 +332,7 @@ export function WidgetDesignPage() {
 
             <div className="hot-wd-field">
               <span className="hot-wd-label">Widget logo</span>
-              <div className="hot-wd-logo-row">
+              <div className="hot-wd-logo-row hot-wd-logo-box">
                 {logo ? (
                   // One logo at a time: to change it, remove this one first.
                   <span className="hot-wd-logo">
@@ -339,7 +350,7 @@ export function WidgetDesignPage() {
                   <button type="button" className="hot-wd-logo-row__action" onClick={() => logoRef.current?.click()}>{logo ? 'Change logo' : 'Upload logo'}</button>
                   {/* An error replaces the guideline, in red, until a valid image is chosen. */}
                   <span className={`hot-wd-logo-row__hint${logoError ? ' hot-wd-logo-row__hint--error' : ''}`} role={logoError ? 'alert' : undefined}>
-                    {logoError ?? 'PNG or JPG, up to 250 × 250 px. Square works best.'}
+                    {logoError ?? 'PNG or JPG, max 1 MB. Square works best.'}
                   </span>
                 </div>
                 <input ref={logoRef} type="file" accept="image/png,image/jpeg" hidden onChange={onLogoFile} />
@@ -348,9 +359,14 @@ export function WidgetDesignPage() {
 
             <Input label="Widget heading" value={heading} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setHeading)(e.target.value)} />
             <Input label="Widget tagline" value={tagline} maxLength={40} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setTagline)(e.target.value)} />
+            <Input
+              label="Greeting" value={greeting} maxLength={30} suffix={{ count: true }} fullWidth placeholder={DEFAULT_GREETING}
+              helperText="The large line on the home screen. Leave it empty to use the default."
+              onFocus={() => setPreview('home')} onChange={(e) => edit(setGreeting)(e.target.value)}
+            />
             <Textarea
               label="Welcome message" value={welcome} maxLength={120} showCount={welcome.length > 100} fullWidth rows={3} placeholder={DEFAULT_WELCOME}
-              helperText="Shown under “Hi there!”. Leave it empty to use the default."
+              helperText="Shown under the greeting. Leave it empty to use the default."
               onFocus={() => setPreview('home')} onChange={(e) => edit(setWelcome)(e.target.value)}
             />
           </Group>
@@ -358,24 +374,39 @@ export function WidgetDesignPage() {
           <Group title="Launcher" open={open === 'launcher'} onToggle={() => toggle('launcher')} layout={layout}>
             <div className="hot-wd-field">
               <span className="hot-wd-label">Launcher icon</span>
-              <div className="hot-wd-logo-row">
-                {/* Same pattern as Widget logo. With no upload, the default launcher shows, so the admin can match it to the preview. */}
-                <span className="hot-wd-logo hot-wd-logo--launcher" style={widgetStyle}>
-                  {launcherIcon ? <img src={launcherIcon.url} alt={`Launcher icon: ${launcherIcon.name}`} /> : <Icon name="chatsupport" size={16} />}
-                  {launcherIcon && (
-                    <button type="button" className="hot-wd-logo__remove" aria-label="Remove launcher icon" onClick={() => { setLauncherIcon(null); setLauncherError(null); setDirty(true) }}>
-                      <Icon name="close" size={14} />
-                    </button>
-                  )}
-                </span>
-                <div className="hot-wd-logo-row__text">
-                  <button type="button" className="hot-wd-logo-row__action" onClick={() => fileRef.current?.click()}>{launcherIcon ? 'Change icon' : 'Upload icon'}</button>
-                  {/* An error replaces the guideline, in red, until a valid image is chosen. */}
-                  <span className={`hot-wd-logo-row__hint${launcherError ? ' hot-wd-logo-row__hint--error' : ''}`} role={launcherError ? 'alert' : undefined}>
-                    {launcherError ?? 'PNG or JPG, up to 1 MB. Replaces the default chat bubble.'}
+              <div className="hot-wd-logo-box hot-wd-logo-box--stack">
+                <div className="hot-wd-logo-row">
+                  {/* Same pattern as Widget logo. With no upload, the default launcher shows, so the admin can match it to the preview. */}
+                  <span className="hot-wd-logo hot-wd-logo--launcher" style={widgetStyle}>
+                    {/* Shows what the launcher will show: the widget logo while the box below is ticked. */}
+                    {launcherShown ? <img src={launcherShown.url} alt={`Launcher icon: ${launcherShown.name}`} /> : <Icon name="chatsupport" size={16} />}
+                    {launcherShown && (
+                      <button type="button" className="hot-wd-logo__remove" aria-label="Remove launcher icon" onClick={removeLauncherIcon}>
+                        <Icon name="close" size={14} />
+                      </button>
+                    )}
                   </span>
+                  <div className="hot-wd-logo-row__text">
+                    {/* While the widget logo is in use, the action takes it off instead of uploading over it. */}
+                    {launcherUsesLogo
+                      ? <button type="button" className="hot-wd-logo-row__action" onClick={removeLauncherIcon}>Remove icon</button>
+                      : <button type="button" className="hot-wd-logo-row__action" onClick={() => fileRef.current?.click()}>{launcherIcon ? 'Change icon' : 'Upload icon'}</button>}
+                    {/* An error replaces the guideline, in red, until a valid image is chosen. */}
+                    <span className={`hot-wd-logo-row__hint${launcherError ? ' hot-wd-logo-row__hint--error' : ''}`} role={launcherError ? 'alert' : undefined}>
+                      {launcherError ?? 'PNG or JPG, max 1 MB. Square works best.'}
+                    </span>
+                  </div>
+                  <input ref={fileRef} type="file" accept="image/png,image/jpeg" hidden onChange={onLauncherFile} />
                 </div>
-                <input ref={fileRef} type="file" accept="image/png,image/jpeg" hidden onChange={onLauncherFile} />
+                {/* On by default: most admins want their logo on the launcher. Uploading an icon above turns it off. */}
+                {/* Disabled until there's a widget logo; the tooltip says how to turn it on. */}
+                {logo ? (
+                  <Checkbox label="Use the same logo as widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { edit(setLauncherUseLogo)(e.target.checked); setPreview('launcher') }} />
+                ) : (
+                  <Tooltip content="Add a widget logo to use it here">
+                    <span className="hot-wd-tip-target"><Checkbox label="Use the same logo as widget logo" checked={launcherUsesLogo} disabled={!logo} onChange={(e) => { edit(setLauncherUseLogo)(e.target.checked); setPreview('launcher') }} /></span>
+                  </Tooltip>
+                )}
               </div>
             </div>
 
@@ -431,7 +462,7 @@ export function WidgetDesignPage() {
               <div className="hot-wd-site__body"><span className="hot-wd-site__line hot-wd-site__line--title" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line hot-wd-site__line--short" /></div>
               <div className="hot-wd-site__launcher">
                 <span className={`hot-wd-launcher${launcherLabel ? ' hot-wd-launcher--pill' : ''}`} aria-label={launcherLabel || 'Open chat'}>
-                  {launcherIcon ? <img src={launcherIcon.url} alt="" width={24} height={24} onError={() => setLauncherIcon(null)} /> : <span className="hot-wd-launcher__slot"><Icon name="chatsupport" size={24} /></span>}
+                  {launcherShown ? <img src={launcherShown.url} alt="" width={24} height={24} /> : <span className="hot-wd-launcher__slot"><Icon name="chatsupport" size={24} /></span>}
                   {launcherLabel && <span className="hot-wd-launcher__label">{launcherLabel}</span>}
                   {launcherTooltip && <span className="hot-wd-tooltip" role="tooltip">{launcherTooltip}</span>}
                 </span>
@@ -531,7 +562,7 @@ export function WidgetDesignPage() {
             >
               {/* Keyed, so each swap between the bubble and the close icon replays the turn-in animation. */}
               {tryOpen ? <span key="close" className="hot-wd-launcher__slot hot-wd-try__icon"><Icon name="close" size={16} style={{ width: 20, height: 20 }} /></span>
-                : launcherIcon ? <img key="image" className="hot-wd-try__icon" src={launcherIcon.url} alt="" width={48} height={48} />
+                : launcherShown ? <img key="image" className="hot-wd-try__icon" src={launcherShown.url} alt="" width={48} height={48} />
                 : <span key="bubble" className="hot-wd-launcher__slot hot-wd-try__icon"><Icon name="chatsupport" size={24} /></span>}
               {/* The label stays mounted and folds away, so the pill's width animates into the circle and back. */}
               {launcherLabel && <span className="hot-wd-launcher__label hot-wd-try__label" aria-hidden={tryOpen}>{launcherLabel}</span>}

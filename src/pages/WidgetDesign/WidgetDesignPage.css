@@ -38,6 +38,12 @@
 .hot-wd-picker__sv:focus-visible, .hot-wd-picker__hue:focus-visible { outline: 2px solid var(--primaryBorderDefault); outline-offset: 2px; }
 /* An uploaded widget logo, with the remove button on its top-right corner */
 .hot-wd-logo-row { display: flex; align-items: center; gap: 12px; }
+/* Widget logo and launcher icon: the upload sits in a bordered box */
+.hot-wd-logo-box { align-self: stretch; box-sizing: border-box; padding: 14px; border: 1px solid var(--slateBorderLight); border-radius: 8px; }
+.hot-wd-logo-box--stack { display: flex; flex-direction: column; gap: 12px; }
+/* The tooltip's wrapper hugs the checkbox, so the bubble centres over it rather than over the whole box. */
+.hot-wd-logo-box--stack > .hot-tooltip-wrap { align-self: flex-start; }
+.hot-wd-tip-target { display: inline-flex; }
 .hot-wd-logo { position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center; box-sizing: border-box; width: 40px; height: 40px; padding: 4px; border: 1px dashed var(--slateBorderDefault); border-radius: 9999px; background: var(--slateSurfaceWhite); }
 .hot-wd-logo img { width: 100%; height: 100%; border-radius: 9999px; object-fit: contain; }
 .hot-wd-logo--empty { color: var(--slateIconsSubtle); cursor: pointer; }
@@ -60,6 +66,8 @@
 /* Conversation: Agent identity and Features sub-sections */
 .hot-wd-section { display: flex; flex-direction: column; gap: 8px; }
 .hot-wd-radios { gap: 6px; }
+/* A disabled checkbox's text, such as "Use the same logo as widget logo" before a logo is uploaded */
+.hot-wd .hot-checkbox--disabled, .hot-cci .hot-checkbox--disabled { color: var(--slateTextDisabled); }
 .hot-wd__actions-bar { display: inline-flex; align-items: center; gap: 8px; }
 .hot-wd-option-eg { font-style: italic; color: var(--slateTextSubtle); }
 .hot-wd-section__title { font: var(--fontWeightMedium) 14px/20px var(--fontFamily); color: var(--slateTextBody); }
@@ -88,11 +96,8 @@
 .hot-wd-widget__footer { flex: none; padding: 20px; background: var(--slateSurfaceWhite); }
 
 /* Home */
-.hot-wd-home { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 20px; min-height: 0; padding: 0 20px; background: var(--slateSurfaceSubtle); }
+.hot-wd-home { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 20px; min-height: 0; padding: 0 20px; background: linear-gradient(to bottom, var(--slateSurfaceSubtle), var(--slateSurfaceWhite)); }
 .hot-wd-home__hero { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
-.hot-wd-avatars { display: flex; }
-.hot-wd-avatars img { width: 32px; height: 32px; box-sizing: border-box; border: 2px solid var(--slateSurfaceSubtle); border-radius: 9999px; object-fit: cover; }
-.hot-wd-avatars img + img { margin-left: -6px; }
 .hot-wd-home__text { display: flex; flex-direction: column; gap: 4px; max-width: 280px; }
 .hot-wd-home__greeting { margin: 0; font: var(--fontWeightMedium) 20px/28px var(--fontFamily); color: var(--slateTextTitle); }
 .hot-wd-home__welcome { margin: 0; overflow-wrap: anywhere; font: var(--fontWeightRegular) 16px/24px var(--fontFamily); color: var(--slateTextBody); }

@@ -1,0 +1,14 @@
+/* Create Chat Inbox: two steps in the admin panel. Field styles come from Widget Design; colours use tokens only. */
+.hot-cci { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.hot-cci__body { padding: 20px; overflow: auto; }
+.hot-cci__form { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 24px; max-width: 520px; min-width: 0; }
+.hot-cci__form > .hot-input, .hot-cci__form > div { align-self: stretch; }
+.hot-cci__intro { margin: 0; font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }
+.hot-cci__required { color: var(--errorBorderDefault); }
+
+/* Members: the chosen people as tags in a field-like box that opens the searchable list */
+.hot-cci__members { align-items: stretch; }
+.hot-cci__members-box { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; box-sizing: border-box; min-height: 40px; padding: 6px 10px; border: 1px solid var(--slateBorderLight); border-radius: 6px; background: var(--slateSurfaceWhite); text-align: left; cursor: pointer; }
+.hot-cci__members-box:hover { border-color: var(--slateBorderDefault); }
+.hot-cci__members-box:focus-visible { outline: 2px solid var(--primaryBorderDefault); outline-offset: 1px; }
+.hot-cci__placeholder { font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }

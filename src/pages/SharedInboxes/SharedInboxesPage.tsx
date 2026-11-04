@@ -17,6 +17,7 @@ import type { SubNavChannelId } from '../../patterns/SubNav/data'
 import { sharedInboxChannels } from './data'
 import type { Inbox } from './data'
 import { WidgetDesignPage } from '../WidgetDesign/WidgetDesignPage'
+import { CreateChatInboxPage } from '../CreateChatInbox/CreateChatInboxPage'
 import './SharedInboxesPage.css'
 
 function ChannelIcon({ icon }: { icon: IconName }) {
@@ -54,6 +55,8 @@ export function SharedInboxesPage({ channel: initialChannel = 'email', inboxId, 
   const found = inboxId ? sharedInboxChannels.flatMap((c) => c.inboxes.map((i) => ({ channel: c.id, inbox: i }))).find((x) => x.inbox.id === inboxId) : undefined
   const [open, setOpen] = useState<{ channel: SubNavChannelId; inbox: Inbox } | null>(found ? { channel: found.channel, inbox: found.inbox } : null)
   const [page, setPage] = useState<string | undefined>(settingsItem)
+  // Create Chat Inbox: its two steps replace the list until the inbox is created or the back arrow is pressed.
+  const [creating, setCreating] = useState(false)
 
   const channel = sharedInboxChannels.find((c) => c.id === channelId) ?? sharedInboxChannels[0]
   const inboxes = lists[channel.id] ?? []
@@ -68,6 +71,19 @@ export function SharedInboxesPage({ channel: initialChannel = 'email', inboxId, 
 
   const nav = <MainNav items={navSampleItems} footerItems={navSampleFooterItems} value="admin" onChange={onNavigate} user={{ initial: 'J', name: 'John Cole' }} />
   const sidebar = <AdminSidebar sections={adminSampleSections} value="shared-inbox" onChange={onAdminNavigate} />
+
+  if (creating) {
+    return (
+      <CreateChatInboxPage
+        nav={nav} sidebar={sidebar} onCancel={() => setCreating(false)}
+        onCreate={(inbox) => {
+          setLists((l) => ({ ...l, chat: [...(l.chat ?? []), { id: `chat-${Date.now()}`, name: inbox.name }] }))
+          setChannelId('chat')
+          setCreating(false)
+        }}
+      />
+    )
+  }
 
   let subNav: ReactNode
   let content: ReactNode
@@ -94,7 +110,7 @@ export function SharedInboxesPage({ channel: initialChannel = 'email', inboxId, 
     subNav = <SubNav title="Shared Inboxes" items={sharedInboxChannels.map((c) => ({ id: c.id, label: c.label, icon: c.icon }))} value={channel.id} onChange={(id) => setChannelId(id as SubNavChannelId)} />
     content = (
       <>
-        <PageBar title={channel.label} action={<Button variant="primary" size="sm">{`Create ${channel.singular}`}</Button>} />
+        <PageBar title={channel.label} action={<Button variant="primary" size="sm" onClick={channel.id === 'chat' ? () => setCreating(true) : undefined}>{`Create ${channel.singular}`}</Button>} />
         <div className="hot-shared-inboxes__body">
           {inboxes.length > 0 ? (
             <Table
