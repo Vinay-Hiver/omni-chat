@@ -143,8 +143,6 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
       <PageBar title="Widget Design" />
       <div className="hot-wd__body">
         <div className="hot-cci__form">
-          <p className="hot-cci__intro">Make the widget look like your brand. You can change everything else in Widget Design once the inbox is live.</p>
-
           <div className="hot-wd-field">
             <span className="hot-wd-label">Widget color</span>
             <button ref={swatchRef} type="button" className="hot-wd-swatch" style={{ background: color }} aria-label="Widget color" aria-haspopup="true" aria-expanded={colorOpen} onClick={() => setColorOpen((o) => !o)} />

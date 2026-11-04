@@ -3,7 +3,6 @@
 .hot-cci__body { padding: 20px; overflow: auto; }
 .hot-cci__form { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 24px; max-width: 520px; min-width: 0; }
 .hot-cci__form > .hot-input, .hot-cci__form > div { align-self: stretch; }
-.hot-cci__intro { margin: 0; font: var(--fontWeightRegular) 14px/20px var(--fontFamily); color: var(--slateTextSubtle); }
 .hot-cci__required { color: var(--errorBorderDefault); }
 
 /* Members: the chosen people as tags in a field-like box that opens the searchable list */
