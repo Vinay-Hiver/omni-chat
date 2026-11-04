@@ -45,7 +45,9 @@
 .hot-wd-logo-box--stack > .hot-tooltip-wrap { align-self: flex-start; }
 .hot-wd-tip-target { display: inline-flex; }
 .hot-wd-logo { position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center; box-sizing: border-box; width: 40px; height: 40px; padding: 4px; border: 1px dashed var(--slateBorderDefault); border-radius: 9999px; background: var(--slateSurfaceWhite); }
-.hot-wd-logo img { width: 100%; height: 100%; border-radius: 9999px; object-fit: contain; }
+/* An uploaded image fills the circle and is cropped, as in the widget header and the chat bubble */
+.hot-wd-logo:has(img) { padding: 0; }
+.hot-wd-logo img { width: 100%; height: 100%; border-radius: 9999px; object-fit: cover; }
 .hot-wd-logo--empty { color: var(--slateIconsSubtle); cursor: pointer; }
 .hot-wd-logo--empty:hover { border-color: var(--primaryBorderDefault); background: var(--primarySurfaceSubtle); color: var(--primaryTextLabel); }
 .hot-wd-logo--empty:focus-visible { outline: 2px solid var(--primaryBorderDefault); outline-offset: 2px; }
@@ -61,7 +63,6 @@
 /* Launcher icon: the logo container, filled with the default launcher until an icon is uploaded */
 .hot-wd-logo--launcher { border-style: solid; border-color: var(--widget-color); background: var(--widget-color); color: var(--slateSurfaceWhite); }
 .hot-wd-logo--launcher:has(img) { padding: 0; border-style: dashed; border-color: var(--slateBorderDefault); background: var(--slateSurfaceWhite); }
-.hot-wd-logo--launcher img { object-fit: cover; } /* fills the circle, same as the launcher */
 
 /* Conversation: Agent identity and Features sub-sections */
 .hot-wd-section { display: flex; flex-direction: column; gap: 8px; }
