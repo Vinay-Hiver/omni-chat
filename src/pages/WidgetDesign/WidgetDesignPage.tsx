@@ -369,7 +369,7 @@ export function WidgetDesignPage() {
               onFocus={() => setPreview('home')} onChange={(e) => edit(setWelcome)(e.target.value)}
             />
             <Input
-              label="Start button text" value={startLabel} maxLength={25} suffix={{ count: true }} fullWidth placeholder={DEFAULT_START_LABEL}
+              label="Button text" value={startLabel} maxLength={25} suffix={{ count: true }} fullWidth placeholder={DEFAULT_START_LABEL}
               onFocus={() => setPreview('home')} onChange={(e) => edit(setStartLabel)(e.target.value)}
             />
           </Group>
