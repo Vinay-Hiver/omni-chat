@@ -13,7 +13,7 @@ import { Tag } from '../../components/Tag'
 import { Tooltip } from '../../components/Tooltip'
 import { Textarea } from '../../components/Textarea'
 import { ColorPicker, cssToHsv, hsvToHex } from './ColorPicker'
-import { DEFAULT_GREETING, DEFAULT_WELCOME, launcherImage, loadSettings, readAsDataUrl, saveSettings } from './widgetSettings'
+import { DEFAULT_GREETING, DEFAULT_START_LABEL, DEFAULT_WELCOME, launcherImage, loadSettings, readAsDataUrl, saveSettings } from './widgetSettings'
 import type { WidgetSettings } from './widgetSettings'
 import type { Hsv } from './ColorPicker'
 import { PageBar } from '../SharedInboxes/SharedInboxesPage'
@@ -100,6 +100,7 @@ export function WidgetDesignPage() {
   const [tagline, setTagline] = useState(saved.tagline)
   const [greeting, setGreeting] = useState(saved.greeting)
   const [welcome, setWelcome] = useState(saved.welcome)
+  const [startLabel, setStartLabel] = useState(saved.startLabel)
   const [logo, setLogo] = useState(saved.logo)
   const [logoError, setLogoError] = useState<string | null>(null)
   // Launcher (R2–R4)
@@ -195,7 +196,7 @@ export function WidgetDesignPage() {
 
   const save = () => {
     const settings: WidgetSettings = {
-      color, hsv: hsvPicked ? hsv : null, heading, tagline, greeting, welcome, logo, launcherUseLogo, launcherIcon, launcherLabel, launcherTooltip,
+      color, hsv: hsvPicked ? hsv : null, heading, tagline, greeting, welcome, startLabel, logo, launcherUseLogo, launcherIcon, launcherLabel, launcherTooltip,
       agentName, filePicker, csat, history, historyDesign,
     }
     const ok = saveSettings(settings)
@@ -269,7 +270,7 @@ export function WidgetDesignPage() {
             </div>
           </div>
         </div>
-        <div className="hot-wd-widget__footer"><span className="hot-wd-start">Start Conversation</span></div>
+        <div className="hot-wd-widget__footer"><span className="hot-wd-start">{startLabel.trim() || DEFAULT_START_LABEL}</span></div>
         {historyNav}
       </>
   )
@@ -366,6 +367,10 @@ export function WidgetDesignPage() {
             <Textarea
               label="Welcome message" value={welcome} maxLength={120} showCount={welcome.length > 100} fullWidth rows={3} placeholder={DEFAULT_WELCOME}
               onFocus={() => setPreview('home')} onChange={(e) => edit(setWelcome)(e.target.value)}
+            />
+            <Input
+              label="Start button text" value={startLabel} maxLength={25} suffix={{ count: true }} fullWidth placeholder={DEFAULT_START_LABEL}
+              onFocus={() => setPreview('home')} onChange={(e) => edit(setStartLabel)(e.target.value)}
             />
           </Group>
 

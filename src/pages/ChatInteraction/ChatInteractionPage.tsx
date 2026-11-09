@@ -3,7 +3,7 @@ import type { CSSProperties, FormEvent, KeyboardEvent, ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
 import { Tag } from '../../components/Tag'
 import { DotsVertical } from '../WidgetDesign/WidgetDesignPage'
-import { launcherImage, loadSettings } from '../WidgetDesign/widgetSettings'
+import { DEFAULT_START_LABEL, launcherImage, loadSettings } from '../WidgetDesign/widgetSettings'
 import { ME, addLiveMessage, createLiveChat, readLiveChats, subscribeLiveChats, updateLiveChat, useLiveChats } from '../Conversations/liveChats'
 import type { LiveChat, LiveMessage } from '../Conversations/liveChats'
 import '../WidgetDesign/WidgetDesignPage.css'
@@ -391,7 +391,7 @@ export function ChatInteractionPage() {
                     </div>
                   )}
                 </div>
-                <div className="hot-ci-footer"><button type="submit" className="hot-ci-primary" disabled={!canStart}>Start Conversation</button></div>
+                <div className="hot-ci-footer"><button type="submit" className="hot-ci-primary" disabled={!canStart}>{s.startLabel.trim() || DEFAULT_START_LABEL}</button></div>
               </form>
             </>
           ) : (
@@ -438,7 +438,7 @@ export function ChatInteractionPage() {
                   </div>
                 </form>
               ) : stage === 'thanks' ? (
-                <div className="hot-ci-footer"><button type="button" className="hot-ci-primary" onClick={startChat}>Start Conversation</button></div>
+                <div className="hot-ci-footer"><button type="button" className="hot-ci-primary" onClick={startChat}>{s.startLabel.trim() || DEFAULT_START_LABEL}</button></div>
               ) : null}
             </>
           )}

@@ -13,6 +13,8 @@ export type WidgetSettings = {
   /** The large line on the home screen. Empty means the default. */
   greeting: string
   welcome: string
+  /** The button under the welcome message. Empty means the default. */
+  startLabel: string
   logo: UploadedImage | null
   /** The launcher shows the widget logo (on by default); off, it shows `launcherIcon` or the default chat bubble. */
   launcherUseLogo: boolean
@@ -28,6 +30,7 @@ export type WidgetSettings = {
 
 export const DEFAULT_GREETING = 'Hi there!'
 export const DEFAULT_WELCOME = 'We are here to help you'
+export const DEFAULT_START_LABEL = 'Start Conversation'
 
 export const DEFAULT_SETTINGS: WidgetSettings = {
   color: 'var(--primarySurfaceDefault)',
@@ -36,6 +39,7 @@ export const DEFAULT_SETTINGS: WidgetSettings = {
   tagline: 'Ask us anything',
   greeting: '',
   welcome: DEFAULT_WELCOME,
+  startLabel: '',
   logo: null,
   launcherUseLogo: true,
   launcherIcon: null,
