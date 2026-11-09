@@ -49,7 +49,7 @@ export const DEFAULT_SETTINGS: WidgetSettings = {
   filePicker: true,
   csat: true,
   history: true,
-  historyDesign: 'menu',
+  historyDesign: 'nav',
 }
 
 const KEY = 'hot-widget-settings'
@@ -70,7 +70,8 @@ export function loadSettings(): WidgetSettings {
     if (!saved.version || saved.version < 4) saved.logo = null
     // Saved before the launcher could reuse the widget logo: keep an uploaded launcher image.
     if (saved.launcherUseLogo === undefined) saved.launcherUseLogo = !saved.launcherIcon
-    return { ...DEFAULT_SETTINGS, ...saved }
+    // Previous chat is always the bottom nav now; older saves may still say 'menu'.
+    return { ...DEFAULT_SETTINGS, ...saved, historyDesign: 'nav' }
   } catch {
     return DEFAULT_SETTINGS
   }

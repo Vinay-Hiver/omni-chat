@@ -138,6 +138,27 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
   )
 
   const style = { '--widget-color': color } as CSSProperties
+  // The widget home screen, shown on its own and above the launcher.
+  const home = (
+    <>
+      <div className="hot-wd-widget__header">
+        <img className="hot-wd-widget__logo" src={logo?.url ?? DEFAULT_LOGO} width={40} height={40} alt="" />
+        <div className="hot-wd-widget__titles">
+          <span className="hot-wd-widget__title">{heading.trim() || DEFAULT_SETTINGS.heading}</span>
+          <span className="hot-wd-widget__subtitle">{DEFAULT_SETTINGS.tagline}</span>
+        </div>
+      </div>
+      <div className="hot-wd-home">
+        <div className="hot-wd-home__hero">
+          <div className="hot-wd-home__text">
+            <p className="hot-wd-home__greeting">{DEFAULT_GREETING}</p>
+            <p className="hot-wd-home__welcome">{DEFAULT_WELCOME}</p>
+          </div>
+        </div>
+      </div>
+      <div className="hot-wd-widget__footer"><span className="hot-wd-start">Start Conversation</span></div>
+    </>
+  )
   const widget = (
     <div className="hot-cci">
       <PageBar title="Widget Design" />
@@ -152,7 +173,7 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
           </div>
 
           <div className="hot-wd-field">
-            <span className="hot-wd-label">Widget logo</span>
+            <span className="hot-wd-label">Logo</span>
             <div className="hot-wd-logo-row hot-wd-logo-box">
               {logo ? (
                 <span className="hot-wd-logo">
@@ -170,15 +191,15 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
             </div>
           </div>
 
-          <Input label={<>Widget heading <span className="hot-cci__required">*</span></>} value={heading} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => setHeading(e.target.value)} />
+          <Input label={<>Heading <span className="hot-cci__required">*</span></>} value={heading} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => setHeading(e.target.value)} />
           {/* Same as Widget Design > Launcher icon. */}
           <div className="hot-wd-field">
-            <span className="hot-wd-label">Bubble icon</span>
+            <span className="hot-wd-label">Launcher icon</span>
             <div className="hot-wd-logo-box hot-wd-logo-box--stack">
               <div className="hot-wd-logo-row">
                 <span className="hot-wd-logo hot-wd-logo--launcher" style={style}>
                   {launcherShown ? <img src={launcherShown.url} alt={`Launcher icon: ${launcherShown.name}`} /> : <Icon name="chatsupport" size={16} />}
-                  {launcherShown && <button type="button" className="hot-wd-logo__remove" aria-label="Remove bubble icon" onClick={removeLauncherIcon}><Icon name="close" size={14} /></button>}
+                  {launcherShown && <button type="button" className="hot-wd-logo__remove" aria-label="Remove launcher icon" onClick={removeLauncherIcon}><Icon name="close" size={14} /></button>}
                 </span>
                 <div className="hot-wd-logo-row__text">
                   {launcherUsesLogo
@@ -199,7 +220,7 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
             </div>
           </div>
           <Input
-            label="Bubble text" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="e.g., Chat with us"
+            label="Launcher text" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="e.g., Chat with us"
             onFocus={() => setPreview('launcher')} onChange={(e) => setLauncherLabel(e.target.value)}
           />
 
@@ -213,37 +234,24 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
         <div className="hot-wd-preview" style={style}>
           <Tabs
             className="hot-wd-preview__tabs" variant="filled" aria-label="Preview" value={preview} onChange={(v) => setPreview(v as Preview)}
-            tabs={[{ value: 'home', label: 'Home' }, { value: 'launcher', label: 'Chat bubble' }]}
+            tabs={[{ value: 'home', label: 'Home' }, { value: 'launcher', label: 'Launcher' }]}
           />
           {preview === 'launcher' ? (
-            <div className="hot-wd-site" aria-label="Chat bubble preview on a website">
-              <div className="hot-wd-site__bar"><span /><span /><span /></div>
-              <div className="hot-wd-site__body"><span className="hot-wd-site__line hot-wd-site__line--title" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line hot-wd-site__line--short" /></div>
-              <div className="hot-wd-site__launcher">
-                <span className={`hot-wd-launcher${launcherLabel.trim() ? ' hot-wd-launcher--pill' : ''}`} aria-label={launcherLabel.trim() || 'Open chat'}>
-                  {launcherShown ? <img src={launcherShown.url} alt="" width={48} height={48} /> : <span className="hot-wd-launcher__slot"><Icon name="chatsupport" size={24} /></span>}
-                  {launcherLabel.trim() && <span className="hot-wd-launcher__label">{launcherLabel.trim()}</span>}
-                </span>
+            /* A skeleton of the open widget above the launcher, so the launcher stays the focus. */
+            <div className="hot-wd-stack" aria-label="Launcher preview">
+              <div className="hot-wd-widget hot-wd-widget--above hot-wd-skeleton" aria-hidden="true">
+                <div className="hot-wd-skeleton__header"><span className="hot-wd-skeleton__avatar" /><span className="hot-wd-skeleton__lines"><span className="hot-wd-site__line hot-wd-skeleton__title" /><span className="hot-wd-site__line hot-wd-site__line--short" /></span></div>
+                <div className="hot-wd-site__body"><span className="hot-wd-site__line" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line hot-wd-site__line--short" /></div>
+                <span className="hot-wd-skeleton__button" />
               </div>
+              <span className={`hot-wd-launcher${launcherLabel.trim() ? ' hot-wd-launcher--pill' : ''}`} aria-label={launcherLabel.trim() || 'Open chat'}>
+                {launcherShown ? <img src={launcherShown.url} alt="" width={48} height={48} /> : <span className="hot-wd-launcher__slot"><Icon name="chatsupport" size={24} /></span>}
+                {launcherLabel.trim() && <span className="hot-wd-launcher__label">{launcherLabel.trim()}</span>}
+              </span>
             </div>
           ) : (
             <div className="hot-wd-widget" aria-label="Widget preview">
-              <div className="hot-wd-widget__header">
-                <img className="hot-wd-widget__logo" src={logo?.url ?? DEFAULT_LOGO} width={40} height={40} alt="" />
-                <div className="hot-wd-widget__titles">
-                  <span className="hot-wd-widget__title">{heading.trim() || DEFAULT_SETTINGS.heading}</span>
-                  <span className="hot-wd-widget__subtitle">{DEFAULT_SETTINGS.tagline}</span>
-                </div>
-              </div>
-              <div className="hot-wd-home">
-                <div className="hot-wd-home__hero">
-                  <div className="hot-wd-home__text">
-                    <p className="hot-wd-home__greeting">{DEFAULT_GREETING}</p>
-                    <p className="hot-wd-home__welcome">{DEFAULT_WELCOME}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="hot-wd-widget__footer"><span className="hot-wd-start">Start Conversation</span></div>
+              {home}
             </div>
           )}
         </div>

@@ -22,6 +22,13 @@
 .hot-wd-group__head:focus-visible { outline: 2px solid var(--primaryBorderDefault); outline-offset: -2px; }
 .hot-wd-group--open .hot-wd-group__head { border-radius: 8px 8px 0 0; }
 .hot-wd-group__body { display: flex; flex-direction: column; gap: 24px; margin-top: -1px; padding: 14px; border: 1px solid var(--slateBorderLight); border-radius: 0 0 8px 8px; }
+/* Cards fill the page height: closed cards keep their size, and the open one shrinks and scrolls inside when the page is short,
+   so all three titles stay in view. On a tall page the open card keeps its natural height. */
+.hot-wd__form--cards { align-self: stretch; min-height: 0; }
+.hot-wd__form--cards .hot-wd-group { flex: none; }
+.hot-wd__form--cards .hot-wd-group--open { flex: 0 1 auto; min-height: 0; }
+.hot-wd__form--cards .hot-wd-group__head { flex: none; }
+.hot-wd__form--cards .hot-wd-group--open .hot-wd-group__body { min-height: 0; overflow-y: auto; }
 
 /* Fields */
 .hot-wd-field { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -122,6 +129,14 @@
 
 /* Launcher: a mock website with the launcher in the corner (R2–R4) */
 .hot-wd-site { position: relative; }
+/* Launcher preview: the open widget with the launcher under it, right-aligned as on a website. */
+.hot-wd-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; width: 400px; max-width: 100%; }
+.hot-wd-widget--above { width: 100%; height: 536px; } /* 536 + 16 gap + 48 launcher = the 600px of the other previews */
+.hot-wd-skeleton__header { display: flex; align-items: center; gap: 12px; padding: 16px 24px; border-bottom: 1px solid var(--slateBorderLight); }
+.hot-wd-skeleton__avatar { flex: none; width: 40px; height: 40px; border-radius: 9999px; background: var(--slateSurfaceSubtle); }
+.hot-wd-skeleton__lines { display: flex; flex: 1; flex-direction: column; gap: 8px; }
+.hot-wd-skeleton__title { width: 50%; height: 14px; }
+.hot-wd-skeleton__button { height: 40px; margin: auto 24px 24px; border-radius: 6px; background: var(--slateSurfaceSubtle); }
 .hot-wd-site__bar { display: flex; gap: 6px; padding: 12px; border-bottom: 1px solid var(--slateBorderLight); }
 .hot-wd-site__bar span { width: 8px; height: 8px; border-radius: 9999px; background: var(--slateSurfaceSubtle200); }
 .hot-wd-site__body { display: flex; flex-direction: column; gap: 10px; padding: 24px; }

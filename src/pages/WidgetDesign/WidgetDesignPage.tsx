@@ -3,7 +3,6 @@ import type { ChangeEvent, CSSProperties, ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
 import { Button } from '../../components/Button'
 import { Checkbox } from '../../components/Checkbox'
-import { Dropdown } from '../../components/Dropdown'
 import { Input } from '../../components/Input'
 import { Popover } from '../../components/Popover'
 import { Radio, RadioGroup } from '../../components/Radio'
@@ -20,7 +19,6 @@ import { PageBar } from '../SharedInboxes/SharedInboxesPage'
 import './WidgetDesignPage.css'
 
 const SAMPLE_AGENT = 'John Cole'
-const VERIFICATION_SECRET = 'hv_live_7f3a9c21e84b4d0f9a6e52c1b8d3f047'
 const MAX_IMAGE_BYTES = 1024 * 1024
 const DEFAULT_LOGO = '/widget/logo-placeholder.svg' // Figma 28:19568, shown until a logo is uploaded
 const AVATARS = ['/widget/avatar-1.jpg', '/widget/avatar-2.png', '/widget/avatar-3.png', '/widget/avatar-4.jpg']
@@ -85,7 +83,7 @@ function ToggleCard({ title, description, checked, onChange, children }: { title
  * follows the open group and updates as the admin types (R8).
  */
 export function WidgetDesignPage() {
-  const [layout, setLayout] = useState<Layout>('tabs')
+  const layout = 'cards' as Layout
   const [open, setOpen] = useState<GroupId | null>('appearance')
   const [preview, setPreview] = useState<Preview>('home')
   // Every setting starts from the last save, so a reload shows what was saved.
@@ -95,7 +93,6 @@ export function WidgetDesignPage() {
   const [hsv, setHsv] = useState<Hsv>(() => saved.hsv ?? cssToHsv(getComputedStyle(document.documentElement).getPropertyValue(DEFAULT_COLOR)))
   const [hsvPicked, setHsvPicked] = useState(saved.hsv !== null)
   const [colorMenu, setColorMenu] = useState(false)
-  const [optionsMenu, setOptionsMenu] = useState(false)
   const [heading, setHeading] = useState(saved.heading)
   const [tagline, setTagline] = useState(saved.tagline)
   const [greeting, setGreeting] = useState(saved.greeting)
@@ -114,14 +111,12 @@ export function WidgetDesignPage() {
   const [filePicker, setFilePicker] = useState(saved.filePicker)
   const [csat, setCsat] = useState(saved.csat)
   const [history, setHistory] = useState(saved.history)
-  const [historyDesign, setHistoryDesign] = useState<HistoryDesign>(saved.historyDesign)
+  const [historyDesign] = useState<HistoryDesign>(saved.historyDesign)
   const [chatView, setChatView] = useState<'chat' | 'history'>('chat')
   const [chatMenu, setChatMenu] = useState(false)
-  const [copied, setCopied] = useState(false)
   const [dirty, setDirty] = useState(false)
   const [saveError, setSaveError] = useState(false)
   const swatchRef = useRef<HTMLButtonElement>(null)
-  const optionsRef = useRef<HTMLButtonElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
   const logoRef = useRef<HTMLInputElement>(null)
   const chatMenuRef = useRef<HTMLSpanElement>(null)
@@ -138,8 +133,6 @@ export function WidgetDesignPage() {
   const toggle = (g: GroupId) => { setOpen(open === g ? null : g); if (open !== g) setPreview(PREVIEW_FOR[g]) }
   const showTab = (g: GroupId) => { setOpen(g); setPreview(PREVIEW_FOR[g]) }
   // Tabs always show one group, so switching to them opens Appearance if every card was closed.
-  const switchLayout = (l: Layout) => { setLayout(l); if (l === 'tabs' && !open) showTab('appearance') }
-
   const onLauncherFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     e.target.value = ''
@@ -204,11 +197,6 @@ export function WidgetDesignPage() {
     if (ok) setDirty(false)
   }
 
-  const copySecret = () => {
-    navigator.clipboard?.writeText(VERIFICATION_SECRET).catch(() => {})
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
-  }
 
   // Clearing the welcome message restores the default (R6). Hidden agent names show the widget heading instead (R5).
   const headingShown = heading.trim() || 'Chat with us'
@@ -280,32 +268,7 @@ export function WidgetDesignPage() {
   return (
     <div className="hot-wd">
       <PageBar
-        title={
-          <span className="hot-wd__title">
-            Widget Design
-            <button
-              ref={optionsRef} type="button" className="hot-wd-options" aria-haspopup="true" aria-expanded={optionsMenu}
-              onClick={() => setOptionsMenu((o) => !o)}
-            >
-              Design options
-              <Icon name="chevrondown" size={16} />
-            </button>
-            <Popover open={optionsMenu} onClose={() => setOptionsMenu(false)} anchorRef={optionsRef}>
-              <div className="hot-wd-options__menu">
-                <Dropdown
-                  variant="radio" title="Widget design layout" value={layout}
-                  onChange={(v) => switchLayout(v as Layout)}
-                  options={[{ value: 'cards', label: 'Cards' }, { value: 'tabs', label: 'Tabs' }]}
-                />
-                <Dropdown
-                  variant="radio" title="Previous chat" value={historyDesign}
-                  onChange={(v) => { edit(setHistoryDesign)(v as HistoryDesign); setChatView('chat'); setChatMenu(false) }}
-                  options={[{ value: 'nav', label: 'Bottom nav' }, { value: 'menu', label: 'Overflow menu' }]}
-                />
-              </div>
-            </Popover>
-          </span>
-        }
+        title="Widget Design"
         action={
           <span className="hot-wd__actions-bar">
             <Button variant="secondary-filled" size="sm" onClick={tryWidget}>Try Widget</Button>
@@ -319,7 +282,7 @@ export function WidgetDesignPage() {
           {layout === 'tabs' && (
             <Tabs
               className="hot-wd__group-tabs" aria-label="Settings" value={open ?? 'appearance'} onChange={(v) => showTab(v as GroupId)}
-              tabs={[{ value: 'appearance', label: 'Appearance' }, { value: 'launcher', label: 'Chat bubble' }, { value: 'conversation', label: 'Chat window' }]}
+              tabs={[{ value: 'appearance', label: 'Appearance' }, { value: 'launcher', label: 'Launcher' }, { value: 'conversation', label: 'Chat window' }]}
             />
           )}
           <Group title="Appearance" open={open === 'appearance'} onToggle={() => toggle('appearance')} layout={layout}>
@@ -332,7 +295,7 @@ export function WidgetDesignPage() {
             </div>
 
             <div className="hot-wd-field">
-              <span className="hot-wd-label">Widget logo</span>
+              <span className="hot-wd-label">Logo</span>
               <div className="hot-wd-logo-row hot-wd-logo-box">
                 {logo ? (
                   // One logo at a time: to change it, remove this one first.
@@ -358,8 +321,8 @@ export function WidgetDesignPage() {
               </div>
             </div>
 
-            <Input label="Widget heading" value={heading} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setHeading)(e.target.value)} />
-            <Input label="Widget tagline" value={tagline} maxLength={40} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setTagline)(e.target.value)} />
+            <Input label="Heading" value={heading} maxLength={30} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setHeading)(e.target.value)} />
+            <Input label="Tagline" value={tagline} maxLength={40} suffix={{ count: true }} fullWidth onFocus={() => setPreview('home')} onChange={(e) => edit(setTagline)(e.target.value)} />
             <Input
               label="Welcome title" value={greeting} maxLength={30} suffix={{ count: true }} fullWidth placeholder={DEFAULT_GREETING}
               onFocus={() => setPreview('home')} onChange={(e) => edit(setGreeting)(e.target.value)}
@@ -374,9 +337,9 @@ export function WidgetDesignPage() {
             />
           </Group>
 
-          <Group title="Chat bubble" open={open === 'launcher'} onToggle={() => toggle('launcher')} layout={layout}>
+          <Group title="Launcher" open={open === 'launcher'} onToggle={() => toggle('launcher')} layout={layout}>
             <div className="hot-wd-field">
-              <span className="hot-wd-label">Bubble icon</span>
+              <span className="hot-wd-label">Launcher icon</span>
               <div className="hot-wd-logo-box hot-wd-logo-box--stack">
                 <div className="hot-wd-logo-row">
                   {/* Same pattern as Widget logo. With no upload, the default launcher shows, so the admin can match it to the preview. */}
@@ -384,7 +347,7 @@ export function WidgetDesignPage() {
                     {/* Shows what the launcher will show: the widget logo while the box below is ticked. */}
                     {launcherShown ? <img src={launcherShown.url} alt={`Launcher icon: ${launcherShown.name}`} /> : <Icon name="chatsupport" size={16} />}
                     {launcherShown && (
-                      <button type="button" className="hot-wd-logo__remove" aria-label="Remove bubble icon" onClick={removeLauncherIcon}>
+                      <button type="button" className="hot-wd-logo__remove" aria-label="Remove launcher icon" onClick={removeLauncherIcon}>
                         <Icon name="close" size={14} />
                       </button>
                     )}
@@ -414,7 +377,7 @@ export function WidgetDesignPage() {
             </div>
 
             <Input
-              label="Bubble text" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="Chat with us"
+              label="Launcher text" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="Chat with us"
               onFocus={() => setPreview('launcher')} onChange={(e) => edit(setLauncherLabel)(e.target.value)}
             />
             <Input
@@ -442,10 +405,7 @@ export function WidgetDesignPage() {
               <ToggleCard
                 title="Previous conversations" description="Returning visitors can see and continue past chats with this inbox."
                 checked={history} onChange={(v) => { edit(setHistory)(v); setChatView('chat'); setPreview('chat') }}
-              >
-                <Input label="Identity verification secret" value={VERIFICATION_SECRET} readOnly fullWidth size="sm" action={{ label: copied ? 'Copied' : 'Copy', onClick: copySecret }} />
-                <span className="hot-wd-card__desc">Anonymous history stays browser-specific; signed-in users sync across devices.</span>
-              </ToggleCard>
+              />
               </div>
             </div>
           </Group>
@@ -454,20 +414,22 @@ export function WidgetDesignPage() {
         <div className="hot-wd-preview" style={widgetStyle}>
           <Tabs
             className="hot-wd-preview__tabs" variant="filled" aria-label="Preview" value={preview} onChange={(v) => setPreview(v as Preview)}
-            tabs={[{ value: 'home', label: 'Home' }, { value: 'launcher', label: 'Chat bubble' }, { value: 'chat', label: 'Chat window' }]}
+            tabs={[{ value: 'home', label: 'Home' }, { value: 'launcher', label: 'Launcher' }, { value: 'chat', label: 'Chat window' }]}
           />
 
           {preview === 'launcher' ? (
-            <div className="hot-wd-site" aria-label="Chat bubble preview on a website">
-              <div className="hot-wd-site__bar"><span /><span /><span /></div>
-              <div className="hot-wd-site__body"><span className="hot-wd-site__line hot-wd-site__line--title" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line hot-wd-site__line--short" /></div>
-              <div className="hot-wd-site__launcher">
-                <span className={`hot-wd-launcher${launcherLabel ? ' hot-wd-launcher--pill' : ''}`} aria-label={launcherLabel || 'Open chat'}>
-                  {launcherShown ? <img src={launcherShown.url} alt="" width={24} height={24} /> : <span className="hot-wd-launcher__slot"><Icon name="chatsupport" size={24} /></span>}
-                  {launcherLabel && <span className="hot-wd-launcher__label">{launcherLabel}</span>}
-                  {launcherTooltip && <span className="hot-wd-tooltip" role="tooltip">{launcherTooltip}</span>}
-                </span>
+            /* A skeleton of the open widget above the launcher, so the launcher stays the focus. */
+            <div className="hot-wd-stack" aria-label="Launcher preview">
+              <div className="hot-wd-widget hot-wd-widget--above hot-wd-skeleton" aria-hidden="true">
+                <div className="hot-wd-skeleton__header"><span className="hot-wd-skeleton__avatar" /><span className="hot-wd-skeleton__lines"><span className="hot-wd-site__line hot-wd-skeleton__title" /><span className="hot-wd-site__line hot-wd-site__line--short" /></span></div>
+                <div className="hot-wd-site__body"><span className="hot-wd-site__line" /><span className="hot-wd-site__line" /><span className="hot-wd-site__line hot-wd-site__line--short" /></div>
+                <span className="hot-wd-skeleton__button" />
               </div>
+              <span className={`hot-wd-launcher${launcherLabel ? ' hot-wd-launcher--pill' : ''}`} aria-label={launcherLabel || 'Open chat'}>
+                {launcherShown ? <img src={launcherShown.url} alt="" width={24} height={24} /> : <span className="hot-wd-launcher__slot"><Icon name="chatsupport" size={24} /></span>}
+                {launcherLabel && <span className="hot-wd-launcher__label">{launcherLabel}</span>}
+                {launcherTooltip && <span className="hot-wd-tooltip" role="tooltip">{launcherTooltip}</span>}
+              </span>
             </div>
           ) : (
             <div className="hot-wd-widget" aria-label="Widget preview">
