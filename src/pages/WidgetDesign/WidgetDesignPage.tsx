@@ -377,11 +377,11 @@ export function WidgetDesignPage() {
             </div>
 
             <Input
-              label="Launcher text" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="Chat with us"
+              label="Launcher text" value={launcherLabel} maxLength={25} suffix={{ count: true }} fullWidth placeholder="Chat with us"
               onFocus={() => setPreview('launcher')} onChange={(e) => edit(setLauncherLabel)(e.target.value)}
             />
             <Input
-              label="Hover text" value={launcherTooltip} maxLength={60} suffix={{ count: true }} fullWidth placeholder="We reply in minutes"
+              label="Hover text" value={launcherTooltip} maxLength={40} suffix={{ count: true }} fullWidth placeholder="We reply in minutes"
               onFocus={() => setPreview('launcher')} onChange={(e) => edit(setLauncherTooltip)(e.target.value)}
             />
           </Group>

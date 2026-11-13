@@ -220,7 +220,7 @@ export function CreateChatInboxPage({ nav, sidebar, onCancel, onCreate }: Create
             </div>
           </div>
           <Input
-            label="Launcher text" value={launcherLabel} maxLength={30} suffix={{ count: true }} fullWidth placeholder="e.g., Chat with us"
+            label="Launcher text" value={launcherLabel} maxLength={25} suffix={{ count: true }} fullWidth placeholder="e.g., Chat with us"
             onFocus={() => setPreview('launcher')} onChange={(e) => setLauncherLabel(e.target.value)}
           />
 

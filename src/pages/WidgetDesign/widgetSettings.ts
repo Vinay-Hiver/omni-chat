@@ -71,7 +71,9 @@ export function loadSettings(): WidgetSettings {
     // Saved before the launcher could reuse the widget logo: keep an uploaded launcher image.
     if (saved.launcherUseLogo === undefined) saved.launcherUseLogo = !saved.launcherIcon
     // Previous chat is always the bottom nav now; older saves may still say 'menu'.
-    return { ...DEFAULT_SETTINGS, ...saved, historyDesign: 'nav' }
+    const merged = { ...DEFAULT_SETTINGS, ...saved }
+    // Launcher text and hover text were 30 and 60 characters; trim older saves to the new 25 and 40.
+    return { ...merged, historyDesign: 'nav', launcherLabel: merged.launcherLabel.slice(0, 25), launcherTooltip: merged.launcherTooltip.slice(0, 40) }
   } catch {
     return DEFAULT_SETTINGS
   }

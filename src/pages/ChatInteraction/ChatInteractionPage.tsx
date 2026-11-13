@@ -1,3 +1,4 @@
+import { EmptyState } from '../../patterns/EmptyState'
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, FormEvent, KeyboardEvent, ReactNode } from 'react'
 import { Icon } from '../../icons/Icon'
@@ -61,6 +62,8 @@ export function ChatInteractionPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  // The email error shows once the visitor leaves the field, then updates as they type.
+  const [emailTouched, setEmailTouched] = useState(false)
   const [visitor, setVisitor] = useState<string | null>(null)
   // Conversation
   const [items, setItems] = useState<Item[]>([])
@@ -69,6 +72,8 @@ export function ChatInteractionPage() {
   const [human, setHuman] = useState(false)
   const [, setTick] = useState(0)
   const [banner, setBanner] = useState<Banner>(null)
+  // Prototype control: show History as a first-time visitor sees it, with no past chats.
+  const [noHistory, setNoHistory] = useState(false)
   // Previous conversations (when switched on in Widget Design): the list, or one past chat's transcript by id.
   const [panel, setPanel] = useState<'chat' | 'history' | string>('chat')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -244,6 +249,7 @@ export function ChatInteractionPage() {
 
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
   const canStart = name.trim() !== '' && emailOk
+  const emailError = emailTouched && email.trim() !== '' && !emailOk
   const submitForm = (e: FormEvent) => { e.preventDefault(); if (!canStart) return; setVisitor(name.trim()); startChat() }
 
   const style = { '--widget-color': s.color } as CSSProperties
@@ -253,7 +259,7 @@ export function ChatInteractionPage() {
   const subtitle = human && s.agentName === 'hidden' ? s.tagline : `${s.heading} - ${human ? humanName : 'AI Agent'}`
 
   // This browser's other chats with the inbox, newest first (anonymous history is browser-specific).
-  const past = allChats.filter((c) => c.id !== chatId.current)
+  const past = noHistory ? [] : allChats.filter((c) => c.id !== chatId.current)
   const transcript_ = past.find((c) => c.id === panel)
   const showMenu = s.history && s.historyDesign === 'menu'
   const showNav = s.history && s.historyDesign === 'nav'
@@ -316,12 +322,13 @@ export function ChatInteractionPage() {
 
   return (
     <div className="hot-ci" style={style}>
-      {/* Prototype controls, outside the widget: show the two banners the visitor can't trigger from here. */}
+      {/* Prototype controls, outside the widget: show the banners and the empty History the visitor can't trigger from here. */}
       <div className="hot-ci-sim" aria-label="Simulate">
         <span>Simulate</span>
         <button type="button" onClick={() => setBanner('offline')}>Connection lost</button>
         <button type="button" onClick={() => setBanner('unavailable')}>Chat unavailable</button>
-        <button type="button" onClick={() => setBanner(null)}>Clear</button>
+        {s.history && <button type="button" onClick={() => { setNoHistory(true); setOpen(true); setPanel('history') }}>No previous conversations</button>}
+        <button type="button" onClick={() => { setBanner(null); setNoHistory(false) }}>Clear</button>
       </div>
 
       {open && (
@@ -344,7 +351,7 @@ export function ChatInteractionPage() {
                     </li>
                   ))}
                 </ul>
-              ) : <div className="hot-ci-past-empty">No previous conversations yet.</div>}
+              ) : <div className="hot-ci-past-empty"><EmptyState icon="chat" title="No previous conversations" description="Your past chats with us will show up here." /></div>}
               <div className="hot-ci-footer"><button type="button" className="hot-ci-primary" onClick={newConversation}>Start new conversation</button></div>
             </>
           ) : transcript_ ? (
@@ -381,7 +388,13 @@ export function ChatInteractionPage() {
                     <div className="hot-ci-form">
                       <p>Please enter the information to start conversation</p>
                       <label>Full Name<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" autoComplete="name" /></label>
-                      <label>Email Address<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" autoComplete="email" /></label>
+                      <label>Email Address
+                        <input
+                          type="email" value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setEmailTouched(true)} placeholder="Enter your email" autoComplete="email"
+                          className={emailError ? 'hot-ci-input--error' : undefined} aria-invalid={emailError || undefined} aria-describedby={emailError ? 'hot-ci-email-error' : undefined}
+                        />
+                        {emailError && <span id="hot-ci-email-error" className="hot-ci-error">Enter a valid email address</span>}
+                      </label>
                       <label>Phone Number
                         <span className="hot-ci-phone">
                           <select aria-label="Country code" defaultValue="+1"><option value="+1">🇺🇸 +1</option><option value="+44">🇬🇧 +44</option><option value="+91">🇮🇳 +91</option></select>
